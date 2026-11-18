@@ -91,12 +91,9 @@ export function AppShell({ title }: { title: string }) {
     <div ref={navScrollRef} onScroll={handleNavScroll} className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4">
       {NAV.map((group, gi) => (
         <div key={gi} className="mb-1">
-          {group.label && (
-            <div className={cn(
-              'px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted',
-              collapsed && 'px-0 text-center'
-            )}>
-              {collapsed ? '•' : group.label}
+          {group.label && !collapsed && (
+            <div className="px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted">
+              {group.label}
             </div>
           )}
           {group.items

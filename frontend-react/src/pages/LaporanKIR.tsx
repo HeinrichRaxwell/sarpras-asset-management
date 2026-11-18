@@ -3,7 +3,7 @@ import { api, getToken } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
 import { formatRupiah, formatNumber } from '@/lib/utils';
 import { PageHeader, Button, Field, Select, Input, EmptyState, Skeleton } from '@/components/ui';
-import { FileText, Printer, Download, MapPin } from 'lucide-react';
+import { FileText, Printer, Download, MapPin, FileSpreadsheet } from 'lucide-react';
 
 interface Lokasi { id: number; nama: string; gedung?: string | null; lantai?: string | null }
 interface KirItem {
@@ -66,7 +66,7 @@ export default function LaporanKIR() {
     if (!lokasiId) return;
     try {
       const res = await fetch(`/api/kir/${lokasiId}?year=${year}&format=csv`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
+        headers: { Authorization: 'Bearer ' + getToken() },
       });
       if (!res.ok) throw new Error('Gagal mengunduh CSV');
       const blob = await res.blob();
@@ -82,18 +82,64 @@ export default function LaporanKIR() {
     }
   };
 
+  // Export Excel (.xls) — Excel membuka tabel HTML sebagai spreadsheet asli
+  const exportExcel = () => {
+    if (!data) return;
+    const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8" /></head><body>`;
+    html += `<table border="1"><thead><tr>
+      <th>Kode</th><th>Nama Barang</th><th>Merk/Tipe</th><th>Kategori</th>
+      <th>Jml</th><th>Nilai (Rp)</th><th>Kondisi</th><th>Keterangan</th>
+    </tr></thead><tbody>`;
+    for (const [, items] of groups) {
+      for (const it of items) {
+        html += `<tr>
+          <td>${esc(it.kode)}</td><td>${esc(it.nama)}</td><td>${esc([it.merk, it.tipe].filter(Boolean).join(' ') || '-')}</td>
+          <td>${esc(it.kategori || '-')}</td><td>${it.jumlah ?? 1}</td><td>${esc(it.nilai ?? 0)}</td>
+          <td>${esc(it.kondisi)}</td><td>${esc(it.keterangan || '-')}</td>
+        </tr>`;
+      }
+    }
+    html += `</tbody></table></body></html>`;
+    const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `KIR_${data.lokasi.nama.replace(/[^\w-]+/g, '_')}_${year}.xls`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('Excel berhasil diunduh', 'success');
+  };
+
   return (
     <>
       {/* Print-only: sembunyikan sidebar/header/footer saat mencetak */}
-      <style>{`@media print{aside,header,footer,.no-print{display:none!important}main{padding:0!important}.lg\\:ml-\\[264px\\]{margin-left:0!important}}`}</style>
+      <style>{`
+        @media print {
+          aside, header, footer, .no-print { display: none !important; }
+          main { padding: 0 !important; }
+          body { background: #fff !important; color: #000 !important; }
+          .glass { background: #fff !important; backdrop-filter: none !important;
+                   box-shadow: none !important; border: none !important; }
+          .rounded-2xl { border-radius: 0 !important; }
+          .lg\\:ml-\\[264px\\] { margin-left: 0 !important; }
+          @page { size: A4; margin: 1.5cm 1cm; }
+          h3 { font-size: 16pt !important; }
+          table { width: 100% !important; font-size: 10pt !important;
+                  border-collapse: collapse !important; }
+          th, td { border: 1px solid #999 !important; padding: 4px 6px !important; }
+          thead tr { background: #eee !important; }
+        }
+      `}</style>
 
       <PageHeader
         title="Laporan Aset (KIR)"
         subtitle="Kartu Inventaris Ruang — daftar aset per ruang berdasarkan tahun perolehan."
         action={(
-          <div className="flex gap-2">
+          <div className="no-print flex gap-2">
             <Button variant="outline" icon={<Printer className="h-4 w-4" />} onClick={() => window.print()} disabled={!data}>Cetak</Button>
-            <Button variant="outline" icon={<Download className="h-4 w-4" />} onClick={exportCsv} disabled={!data}>Export CSV</Button>
+            <Button variant="outline" icon={<Download className="h-4 w-4" />} onClick={exportCsv} disabled={!data}>CSV</Button>
+            <Button variant="outline" icon={<FileSpreadsheet className="h-4 w-4" />} onClick={exportExcel} disabled={!data}>Excel</Button>
           </div>
         )}
       />
