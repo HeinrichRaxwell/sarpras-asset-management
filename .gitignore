@@ -1,0 +1,7 @@
+node_modules/
+.env
+*.log
+backend/_debug_code.js
+frontend/assets/_p/
+frontend/assets/_shell.html
+frontend/build_pages.py

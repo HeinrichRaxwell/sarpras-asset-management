@@ -1,0 +1,69 @@
+version: "3.9"
+
+services:
+  # ---------- PostgreSQL 16 ----------
+  db:
+    image: postgres:16-alpine
+    container_name: sarpras_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-sarpras}
+      POSTGRES_USER: ${POSTGRES_USER:-sarpras}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sarpras_secret}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./backend/src/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./backend/src/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    ports:
+      - "${DB_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sarpras} -d ${POSTGRES_DB:-sarpras}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - sarpras_net
+
+  # ---------- Backend API (Express) ----------
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sarpras_api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgres://${POSTGRES_USER:-sarpras}:${POSTGRES_PASSWORD:-sarpras_secret}@db:5432/${POSTGRES_DB:-sarpras}
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_in_production}
+      JWT_EXPIRES: 7d
+      BCRYPT_ROUNDS: 12
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${API_PORT:-3001}:3001"
+    networks:
+      - sarpras_net
+
+  # ---------- Frontend (static, served by nginx) ----------
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sarpras_web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    networks:
+      - sarpras_net
+
+volumes:
+  db_data:
+
+networks:
+  sarpras_net:
+    driver: bridge
