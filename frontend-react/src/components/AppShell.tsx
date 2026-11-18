@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   LayoutDashboard, Package, Warehouse, Tags, MapPin, TrendingDown, Wallet,
   ArrowLeftRight, Repeat, Wrench, ShieldCheck, ClipboardCheck, History,
-  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, Menu, X, PanelLeft,
+  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, X, PanelLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getUser, clearAuth } from '@/lib/api';
@@ -148,7 +148,7 @@ export function AppShell({ title }: { title: string }) {
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className={cn('flex items-center gap-2.5 px-3 py-5', collapsed && 'justify-center px-2')}>
+        <div className={cn('relative flex items-center gap-2.5 px-3 py-5', collapsed && 'justify-center px-2')}>
           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brand to-violet-500 text-[13px] font-extrabold text-white">
             SA
           </div>
@@ -158,7 +158,19 @@ export function AppShell({ title }: { title: string }) {
               <div className="text-[10px] text-muted">Asset Management</div>
             </div>
           )}
-          <button className={cn('ml-auto lg:hidden', collapsed && 'hidden')} onClick={() => setOpen(false)} aria-label="Tutup menu">
+          {/* Tombol minimize — di dalam sidebar, menggantikan area logo saat collapse */}
+          <button
+            onClick={() => setCollapsed((s) => !s)}
+            title={collapsed ? 'Perluas sidebar' : 'Perkecil sidebar'}
+            aria-label={collapsed ? 'Perluas sidebar' : 'Perkecil sidebar'}
+            className={cn(
+              'icon-btn shrink-0',
+              collapsed ? 'absolute right-3 top-5 lg:grid' : 'ml-auto hidden lg:grid'
+            )}
+          >
+            <PanelLeft className="h-5 w-5" strokeWidth={1.8} />
+          </button>
+          <button className="ml-auto lg:hidden" onClick={() => setOpen(false)} aria-label="Tutup menu">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -181,18 +193,6 @@ export function AppShell({ title }: { title: string }) {
       {/* Main */}
       <div className={cn('flex min-w-0 flex-1 flex-col transition-[margin] duration-300', collapsed ? 'lg:ml-[76px]' : 'lg:ml-[264px]')}>
         <header className="glass sticky top-0 z-30 flex h-16 items-center gap-3 rounded-none border-x-0 border-t-0 px-5">
-          {/* Minimize toggle (desktop) */}
-          <button
-            className="icon-btn hidden lg:grid"
-            onClick={() => setCollapsed((s) => !s)}
-            aria-label={collapsed ? 'Perluas sidebar' : 'Perkecil sidebar'}
-          >
-            <PanelLeft className="h-5 w-5" strokeWidth={1.8} />
-          </button>
-          {/* Mobile toggle */}
-          <button className="icon-btn lg:hidden" onClick={() => setOpen(true)} aria-label="Buka menu">
-            <Menu className="h-5 w-5" />
-          </button>
           <h1 className="truncate text-lg font-bold tracking-tight">{title}</h1>
           <div className="ml-auto flex items-center gap-3">
             <button onClick={toggle} className="icon-btn" aria-label="Ganti tema">
