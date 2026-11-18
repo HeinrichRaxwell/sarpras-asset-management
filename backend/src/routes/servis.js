@@ -136,4 +136,22 @@ router.patch('/:id', writeAuth, wrap(async (req, res) => {
   res.json({ ok: true, data: updated });
 }));
 
+// PATCH /api/servis/:id/status — ubah status ringkas (dipakai ServisPreventif)
+router.patch('/:id/status', writeAuth, wrap(async (req, res) => {
+  const { status } = req.body || {};
+  if (!status) throw new HttpError(400, 'Status wajib diisi');
+  const before = (await query('SELECT * FROM servis WHERE id = $1', [req.params.id])).rows[0];
+  if (!before) throw new HttpError(404, 'Servis tidak ditemukan');
+  const updated = await withTransaction(async (client) => {
+    const r = await client.query('UPDATE servis SET status=$1 WHERE id=$2 RETURNING *', [status, req.params.id]);
+    const servis = r.rows[0];
+    if (status === 'Selesai' && servis.jenis === 'Kuratif') {
+      await client.query(`UPDATE aset SET status='Aktif' WHERE kode=$1`, [servis.aset_kode]);
+    }
+    return servis;
+  });
+  await audit(req, 'servis', Number(req.params.id), 'UPDATE_STATUS', before, updated);
+  res.json({ ok: true, data: updated });
+}));
+
 module.exports = router;

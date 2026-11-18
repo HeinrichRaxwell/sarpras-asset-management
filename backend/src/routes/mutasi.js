@@ -90,4 +90,20 @@ router.post('/', writeAuth, wrap(async (req, res) => {
   res.status(201).json({ ok: true, data: created });
 }));
 
+// PATCH /api/mutasi/:id/approve — pimpinan/admin menyetujui mutasi
+router.patch('/:id/approve', writeAuth, wrap(async (req, res) => {
+  const before = (await query('SELECT * FROM mutasi WHERE id = $1', [req.params.id])).rows[0];
+  if (!before) throw new HttpError(404, 'Mutasi tidak ditemukan');
+  if (before.disetujui_oleh) throw new HttpError(409, 'Mutasi sudah disetujui');
+  const approverId = req.user.id;
+  const updated = await query(
+    'UPDATE mutasi SET disetujui_oleh=$1 WHERE id=$2 RETURNING *',
+    [approverId, req.params.id]
+  );
+  await audit(req, 'mutasi', Number(req.params.id), 'APPROVE', before, updated.rows[0]);
+  await assetLog(before.aset_kode, 'Mutasi Disetujui', req.user.username,
+    { mutasi_id: updated.rows[0].id, no_bast: before.no_bast });
+  res.json({ ok: true, data: updated.rows[0] });
+}));
+
 module.exports = router;

@@ -91,3 +91,15 @@ INSERT INTO penyusutan (aset_kode, tahun, metode, nilai_awal, beban_tahunan, aku
 ('AM-2022-0007', 2024, 'Garis Lurus', 62000000, 12400000, 24800000, 37200000),
 ('AM-2022-0015', 2024, 'Garis Lurus', 1850000, 185000, 370000, 1480000)
 ON CONFLICT (aset_kode, tahun) DO NOTHING;
+
+-- Sinkronkan sequence SEMUA tabel ber-kolom id (seed memakai id eksplisit,
+-- tanpa ini INSERT baru akan gagal 409 duplicate key)
+DO $$
+DECLARE t text;
+BEGIN
+  FOR t IN SELECT unnest(ARRAY['lokasi','kategori','sumber_dana','pengguna','verifikasi',
+    'opname_item','verifikasi_item','dokumen','mutasi','servis','penyusutan','peminjaman','penghapusan'])
+  LOOP
+    EXECUTE format('SELECT setval(pg_get_serial_sequence(%L, %L), COALESCE((SELECT MAX(id) FROM %I), 1))', t, 'id', t);
+  END LOOP;
+END $$;

@@ -75,19 +75,20 @@ export function AppShell({ title }: { title: string }) {
     navigate('/login');
   };
 
-  // Simpan posisi scroll nav; restore saat kembali ke shell (anti scroll-jump)
+  // Anti scroll-jump: posisi scroll nav disimpan & dipulihkan tiap route berubah
   useEffect(() => {
     const el = navScrollRef.current;
-    if (!el) return;
-    const saved = Number(sessionStorage.getItem('sarpras_nav_scroll') ?? '0');
-    el.scrollTop = saved;
-    const onScroll = () => sessionStorage.setItem('sarpras_nav_scroll', String(el.scrollTop));
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
+    if (el) el.scrollTop = Number(sessionStorage.getItem('sarpras_nav_scroll') ?? '0');
+  });
 
-  const Nav = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <div ref={navScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4">
+  const handleNavScroll = () => {
+    if (navScrollRef.current) {
+      sessionStorage.setItem('sarpras_nav_scroll', String(navScrollRef.current.scrollTop));
+    }
+  };
+
+  const nav = (
+    <div ref={navScrollRef} onScroll={handleNavScroll} className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4">
       {NAV.map((group, gi) => (
         <div key={gi} className="mb-1">
           {group.label && (
@@ -104,7 +105,7 @@ export function AppShell({ title }: { title: string }) {
               <NavLink
                 key={it.to}
                 to={it.to}
-                onClick={onNavigate}
+                onClick={() => setOpen(false)}
                 title={collapsed ? it.label : undefined}
                 className={({ isActive }) =>
                   cn(
@@ -149,23 +150,25 @@ export function AppShell({ title }: { title: string }) {
         )}
       >
         <div className={cn('relative flex items-center gap-2.5 px-3 py-5', collapsed && 'justify-center px-2')}>
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brand to-violet-500 text-[13px] font-extrabold text-white">
-            SA
-          </div>
           {!collapsed && (
-            <div className="leading-tight">
-              <div className="text-[14px] font-bold tracking-tight">SARPRAS AM</div>
-              <div className="text-[10px] text-muted">Asset Management</div>
-            </div>
+            <>
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brand to-violet-500 text-[13px] font-extrabold text-white">
+                SA
+              </div>
+              <div className="leading-tight">
+                <div className="text-[14px] font-bold tracking-tight">SARPRAS AM</div>
+                <div className="text-[10px] text-muted">Asset Management</div>
+              </div>
+            </>
           )}
-          {/* Tombol minimize — di dalam sidebar, menggantikan area logo saat collapse */}
+          {/* Tombol minimize — di dalam sidebar; saat collapse jadi satu-satunya di area logo */}
           <button
             onClick={() => setCollapsed((s) => !s)}
             title={collapsed ? 'Perluas sidebar' : 'Perkecil sidebar'}
             aria-label={collapsed ? 'Perluas sidebar' : 'Perkecil sidebar'}
             className={cn(
               'icon-btn shrink-0',
-              collapsed ? 'absolute right-3 top-5 lg:grid' : 'ml-auto hidden lg:grid'
+              collapsed ? 'lg:grid' : 'ml-auto hidden lg:grid'
             )}
           >
             <PanelLeft className="h-5 w-5" strokeWidth={1.8} />
@@ -174,7 +177,7 @@ export function AppShell({ title }: { title: string }) {
             <X className="h-5 w-5" />
           </button>
         </div>
-        <Nav onNavigate={() => setOpen(false)} />
+        {nav}
         <div className="px-2 pb-4">
           <button
             onClick={logout}
