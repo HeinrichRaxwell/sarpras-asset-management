@@ -11,26 +11,27 @@ import {
 interface Option { id: number; nama: string }
 interface Aset {
   id: number;
-  kode_aset: string;
-  nama_aset: string;
+  kode: string;
+  nama: string;
   kategori_id?: number | null;
   lokasi_id?: number | null;
   sumber_dana_id?: number | null;
   status?: string;
   kondisi?: string;
-  merk?: string;
-  tipe?: string;
-  serial_number?: string;
+  merk?: string | null;
+  tipe?: string | null;
+  no_seri?: string | null;
   nilai_perolehan?: number | string | null;
   tanggal_perolehan?: string | null;
-  deskripsi?: string;
+  spesifikasi?: string | null;
+  kategori_nama?: string;
+  lokasi_nama?: string;
+  sumber_dana_nama?: string;
 }
-interface Detail extends Aset {
-  kategori?: string; lokasi?: string; sumber_dana?: string;
-}
+interface Detail extends Aset {}
 interface Meta { page: number; limit: number; total: number; totalPages: number }
 
-const EMPTY: Partial<Aset> = { nama_aset: '', kode_aset: '', status: 'Aktif', kondisi: 'Baik', nilai_perolehan: 0 };
+const EMPTY: Partial<Aset> = { nama: '', status: 'Aktif', kondisi: 'Baik', nilai_perolehan: 0 };
 
 export default function DataAset() {
   const { toast } = useToast();
@@ -45,7 +46,7 @@ export default function DataAset() {
   const [page, setPage] = useState(1);
 
   const [form, setForm] = useState<Partial<Aset> | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -93,7 +94,7 @@ export default function DataAset() {
 
   const validate = () => {
     const e: Record<string, string> = {};
-    if (!form?.nama_aset?.trim()) e.nama_aset = 'Nama aset wajib diisi';
+    if (!form?.nama?.trim()) e.nama = 'Nama aset wajib diisi';
     if (!form?.kategori_id) e.kategori_id = 'Kategori wajib dipilih';
     if (!form?.lokasi_id) e.lokasi_id = 'Lokasi wajib dipilih';
     if (form?.nilai_perolehan !== undefined && form.nilai_perolehan !== null && form.nilai_perolehan !== '' && Number(form.nilai_perolehan) < 0) e.nilai_perolehan = 'Nilai tidak boleh negatif';
@@ -106,7 +107,7 @@ export default function DataAset() {
     setSaving(true);
     try {
       const payload = {
-        nama_aset: form?.nama_aset?.trim(),
+        nama: form?.nama?.trim(),
         kategori_id: form?.kategori_id ? Number(form.kategori_id) : null,
         lokasi_id: form?.lokasi_id ? Number(form.lokasi_id) : null,
         sumber_dana_id: form?.sumber_dana_id ? Number(form.sumber_dana_id) : null,
@@ -114,12 +115,12 @@ export default function DataAset() {
         kondisi: form?.kondisi ?? 'Baik',
         merk: form?.merk || null,
         tipe: form?.tipe || null,
-        serial_number: form?.serial_number || null,
+        no_seri: form?.no_seri || null,
         nilai_perolehan: form?.nilai_perolehan === '' || form?.nilai_perolehan == null ? 0 : Number(form.nilai_perolehan),
         tanggal_perolehan: form?.tanggal_perolehan || null,
-        deskripsi: form?.deskripsi || null,
+        spesifikasi: form?.spesifikasi || null,
       };
-      if (editingId) await api.put(`/aset/${editingId}`, payload);
+      if (editingId) await api.put(`/aset/${encodeURIComponent(editingId)}`, payload);
       else await api.post('/aset', payload);
       toast(editingId ? 'Aset diperbarui' : 'Aset ditambahkan', 'success');
       setForm(null); setEditingId(null);
@@ -134,8 +135,8 @@ export default function DataAset() {
   const openDetail = async (kode: string) => {
     setDetailLoading(true); setDetail(null);
     try {
-      const res = await api.get<Detail>(`/aset/${encodeURIComponent(kode)}/detail`);
-      setDetail(res.data ?? null);
+      const res = await api.get<{ aset: Detail }>(`/aset/${encodeURIComponent(kode)}/detail`);
+      setDetail(res.data?.aset ?? null);
     } catch (e) {
       toast((e as Error).message, 'error');
     } finally {
@@ -146,7 +147,7 @@ export default function DataAset() {
   const doDelete = async (hard: boolean) => {
     if (!confirmDelete) return;
     try {
-      await api.delete(`/aset/${confirmDelete.id}${hard ? '?hard=true' : ''}`);
+      await api.delete(`/aset/${encodeURIComponent(confirmDelete.kode)}${hard ? '?hard=true' : ''}`);
       toast(hard ? 'Aset dihapus permanen' : 'Aset dihapus (soft)', 'success');
       setConfirmDelete(null);
       void load();
@@ -228,8 +229,8 @@ export default function DataAset() {
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.id} className="border-t border-line transition hover:bg-brand-soft/30">
-                      <td className="px-4 py-3 font-mono text-[12px]">{r.kode_aset}</td>
-                      <td className="px-4 py-3 font-semibold">{r.nama_aset}</td>
+                      <td className="px-4 py-3 font-mono text-[12px]">{r.kode}</td>
+                      <td className="px-4 py-3 font-semibold">{r.nama}</td>
                       <td className="px-4 py-3 text-muted">{opts.kategori.find((k) => k.id === r.kategori_id)?.nama ?? '-'}</td>
                       <td className="px-4 py-3 tabular-nums">{formatRupiah(r.nilai_perolehan)}</td>
                       <td className="px-4 py-3"><Badge text={r.status ?? '-'} type={statusType(r.status ?? '')} /></td>
@@ -237,10 +238,10 @@ export default function DataAset() {
                       <td className="px-4 py-3 text-muted">{formatDate(r.tanggal_perolehan)}</td>
                       <td className="px-4 py-3">
                         <div className="flex justify-end gap-1.5">
-                          <button onClick={() => void openDetail(r.kode_aset)} className="icon-btn h-7 w-7" aria-label="Detail" title="Detail">
+                          <button onClick={() => void openDetail(r.kode)} className="icon-btn h-7 w-7" aria-label="Detail" title="Detail">
                             <Eye className="h-3.5 w-3.5" strokeWidth={1.8} />
                           </button>
-                          <button onClick={() => { setForm({ ...r }); setEditingId(r.id); setErrors({}); }} className="icon-btn h-7 w-7" aria-label="Edit" title="Edit">
+                          <button onClick={() => { setForm({ ...r }); setEditingId(r.kode); setErrors({}); }} className="icon-btn h-7 w-7" aria-label="Edit" title="Edit">
                             <Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />
                           </button>
                           <button onClick={() => setConfirmDelete(r)} className="icon-btn h-7 w-7 text-danger hover:bg-danger/10" aria-label="Hapus" title="Hapus" disabled={!can('delete_master')}>
@@ -280,8 +281,8 @@ export default function DataAset() {
         }
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <Field label="Nama Aset" required error={errors.nama_aset} className="md:col-span-2">
-            <Input value={form?.nama_aset ?? ''} onChange={(e) => setForm((f) => ({ ...f, nama_aset: e.target.value }))} placeholder="Contoh: Laptop Lenovo ThinkPad T14" />
+          <Field label="Nama Aset" required error={errors.nama} className="md:col-span-2">
+            <Input value={form?.nama ?? ''} onChange={(e) => setForm((f) => ({ ...f, nama: e.target.value }))} placeholder="Contoh: Laptop Lenovo ThinkPad T14" />
           </Field>
           <Field label="Kategori" required error={errors.kategori_id}>
             <Select value={form?.kategori_id ?? ''} onChange={(e) => setForm((f) => ({ ...f, kategori_id: e.target.value ? Number(e.target.value) : null }))}>
@@ -306,7 +307,7 @@ export default function DataAset() {
           </Field>
           <Field label="Merk"><Input value={form?.merk ?? ''} onChange={(e) => setForm((f) => ({ ...f, merk: e.target.value }))} /></Field>
           <Field label="Tipe / Model"><Input value={form?.tipe ?? ''} onChange={(e) => setForm((f) => ({ ...f, tipe: e.target.value }))} /></Field>
-          <Field label="Nomor Seri"><Input value={form?.serial_number ?? ''} onChange={(e) => setForm((f) => ({ ...f, serial_number: e.target.value }))} /></Field>
+          <Field label="Nomor Seri"><Input value={form?.no_seri ?? ''} onChange={(e) => setForm((f) => ({ ...f, no_seri: e.target.value }))} /></Field>
           <Field label="Nilai Perolehan (Rp)" error={errors.nilai_perolehan}>
             <Input type="number" min="0" step="1000" value={form?.nilai_perolehan ?? ''} onChange={(e) => setForm((f) => ({ ...f, nilai_perolehan: e.target.value === '' ? '' : Number(e.target.value) }))} />
           </Field>
@@ -320,8 +321,8 @@ export default function DataAset() {
               {['Baik', 'Rusak Ringan', 'Rusak Berat'].map((s) => <option key={s} value={s}>{s}</option>)}
             </Select>
           </Field>
-          <Field label="Deskripsi" className="md:col-span-2">
-            <Textarea value={form?.deskripsi ?? ''} onChange={(e) => setForm((f) => ({ ...f, deskripsi: e.target.value }))} placeholder="Catatan tambahan..." />
+          <Field label="Spesifikasi" className="md:col-span-2">
+            <Textarea value={form?.spesifikasi ?? ''} onChange={(e) => setForm((f) => ({ ...f, spesifikasi: e.target.value }))} placeholder="Catatan tambahan..." />
           </Field>
         </div>
       </Modal>
@@ -332,8 +333,8 @@ export default function DataAset() {
           <div className="glass h-full w-full max-w-lg overflow-y-auto rounded-l-[1.25rem] p-6" onClick={(e) => e.stopPropagation()}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <div className="font-mono text-[11.5px] text-muted">{detail?.kode_aset}</div>
-                <h3 className="text-xl font-extrabold tracking-tight">{detail?.nama_aset ?? 'Memuat...'}</h3>
+                <div className="font-mono text-[11.5px] text-muted">{detail?.kode}</div>
+                <h3 className="text-xl font-extrabold tracking-tight">{detail?.nama ?? 'Memuat...'}</h3>
                 <div className="mt-2 flex gap-1.5">
                   {detail?.status && <Badge text={detail.status} type={statusType(detail.status)} />}
                   {detail?.kondisi && <Badge text={detail.kondisi} type={statusType(detail.kondisi)} />}
@@ -346,15 +347,15 @@ export default function DataAset() {
             ) : (
               <dl className="space-y-3 text-[13px]">
                 {[
-                  ['Kategori', detail.kategori ?? opts.kategori.find((k) => k.id === detail.kategori_id)?.nama ?? '-'],
-                  ['Lokasi', detail.lokasi ?? opts.lokasi.find((l) => l.id === detail.lokasi_id)?.nama ?? '-'],
-                  ['Sumber Dana', detail.sumber_dana ?? opts.dana.find((s) => s.id === detail.sumber_dana_id)?.nama ?? '-'],
+                  ['Kategori', detail.kategori_nama ?? '-'],
+                  ['Lokasi', detail.lokasi_nama ?? '-'],
+                  ['Sumber Dana', detail.sumber_dana_nama ?? '-'],
                   ['Merk', detail.merk || '-'],
                   ['Tipe / Model', detail.tipe || '-'],
-                  ['Nomor Seri', detail.serial_number || '-'],
+                  ['Nomor Seri', detail.no_seri || '-'],
                   ['Nilai Perolehan', formatRupiah(detail.nilai_perolehan)],
                   ['Tanggal Perolehan', formatDate(detail.tanggal_perolehan)],
-                  ['Deskripsi', detail.deskripsi || '-'],
+                  ['Spesifikasi', detail.spesifikasi || '-'],
                 ].map(([k, v]) => (
                   <div key={k as string} className="flex justify-between gap-4 border-b border-line pb-2.5">
                     <dt className="font-semibold text-muted">{k}</dt>
@@ -380,7 +381,7 @@ export default function DataAset() {
         <div className="flex items-start gap-3">
           <HardDrive className="h-5 w-5 shrink-0 text-danger" strokeWidth={1.8} />
           <p className="text-[13px]">
-            Yakin hapus <strong>{confirmDelete?.nama_aset}</strong> (<span className="font-mono">{confirmDelete?.kode_aset}</span>)? Soft delete menandai aset sebagai <em>Dihapus</em>; permanen menghapus baris dari basis data dan tidak dapat dibatalkan.
+            Yakin hapus <strong>{confirmDelete?.nama}</strong> (<span className="font-mono">{confirmDelete?.kode}</span>)? Soft delete menandai aset sebagai <em>Dihapus</em>; permanen menghapus baris dari basis data dan tidak dapat dibatalkan.
           </p>
         </div>
       </Modal>

@@ -54,6 +54,16 @@ h1, h2, h3, h4 {
     font-variant-numeric: tabular-nums;
     overflow-x: hidden;
   }
+  /* Dropdown: native select options need explicit colors per theme,
+     else dark-mode options render dark-on-dark (invisible). */
+  select option, select optgroup {
+    background-color: #ffffff;
+    color: #1a1a2e;
+  }
+  .dark select option, .dark select optgroup {
+    background-color: #1e293b;
+    color: #e2e8f0;
+  }
   /* Decorative blurred orbs behind glass */
   body::before,
   body::after {
