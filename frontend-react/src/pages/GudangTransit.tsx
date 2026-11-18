@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { api, can } from '@/lib/api';
 import { formatRupiah, formatDate } from '@/lib/utils';
 import { useToast } from '@/context/ToastContext';
-import { Button, Field, Input, Select, Modal, Badge, statusType, PageHeader, EmptyState, Skeleton } from '@/components/ui';
+import { Button, Field, Input, Select, Modal, Badge, PageHeader, EmptyState, Skeleton } from '@/components/ui';
 import {
   Warehouse, CheckCircle2, XCircle, ChevronLeft, ChevronRight, PackageCheck,
 } from 'lucide-react';
@@ -10,15 +10,14 @@ import {
 interface Option { id: number; nama: string }
 interface GudangItem {
   id: number;
-  kode_barang?: string;
   nama_barang: string;
+  pengirim: string | null;
+  tgl_terima: string;
   qty: number;
-  satuan?: string;
-  kondisi?: string;
-  status?: string;
-  catatan?: string;
-  created_at?: string;
-  pemasok?: string;
+  qc_status: string;
+  catatan_qc: string | null;
+  aset_kode: string | null;
+  dibuat_pada: string;
 }
 interface Meta { page: number; limit: number; total: number; totalPages: number }
 
@@ -85,14 +84,14 @@ export default function GudangTransit() {
     try {
       const body = qcResult === 'Lolos'
         ? {
-            hasil: 'Lolos',
+            qc_status: 'Lolos',
             kategori_id: Number(qcForm.kategori_id),
             lokasi_id: Number(qcForm.lokasi_id),
             sumber_dana_id: qcForm.sumber_dana_id ? Number(qcForm.sumber_dana_id) : null,
             nilai_perolehan: Number(qcForm.nilai_perolehan),
-            catatan: qcForm.catatan || null,
+            catatan_qc: qcForm.catatan || null,
           }
-        : { hasil: 'Ditolak', catatan: qcForm.catatan || null };
+        : { qc_status: 'Ditolak', catatan_qc: qcForm.catatan || null };
       await api.patch(`/gudang/${qcTarget.id}/qc`, body);
       toast(qcResult === 'Lolos' ? 'Barang lolos QC & dipromosikan jadi aset' : 'Barang ditolak', 'success');
       setQcTarget(null);
@@ -119,33 +118,39 @@ export default function GudangTransit() {
               <table className="w-full text-[13px]">
                 <thead className="border-b border-line">
                   <tr className="text-left text-[11px] uppercase tracking-wide text-muted">
-                    <th className="px-4 py-3 font-bold">Kode</th>
                     <th className="px-4 py-3 font-bold">Nama Barang</th>
                     <th className="px-4 py-3 font-bold">Jumlah</th>
-                    <th className="px-4 py-3 font-bold">Kondisi</th>
-                    <th className="px-4 py-3 font-bold">Pemasok</th>
-                    <th className="px-4 py-3 font-bold">Tgl Masuk</th>
+                    <th className="px-4 py-3 font-bold">Pengirim</th>
+                    <th className="px-4 py-3 font-bold">Tgl Terima</th>
+                    <th className="px-4 py-3 font-bold">Status QC</th>
                     <th className="px-4 py-3 text-right font-bold">Keputusan QC</th>
                   </tr>
                 </thead>
                 <tbody>
                   {rows.map((r) => (
                     <tr key={r.id} className="border-t border-line transition hover:bg-brand-soft/30">
-                      <td className="px-4 py-3 font-mono text-[12px]">{r.kode_barang ?? `GDG-${r.id}`}</td>
                       <td className="px-4 py-3 font-semibold">{r.nama_barang}</td>
-                      <td className="px-4 py-3">{r.qty} {r.satuan ?? ''}</td>
-                      <td className="px-4 py-3"><Badge text={r.kondisi ?? '-'} type={statusType(r.kondisi ?? '')} /></td>
-                      <td className="px-4 py-3 text-muted">{r.pemasok ?? '-'}</td>
-                      <td className="px-4 py-3 text-muted">{formatDate(r.created_at)}</td>
+                      <td className="px-4 py-3">{r.qty}</td>
+                      <td className="px-4 py-3 text-muted">{r.pengirim ?? '-'}</td>
+                      <td className="px-4 py-3 text-muted">{formatDate(r.tgl_terima)}</td>
                       <td className="px-4 py-3">
-                        <div className="flex justify-end gap-1.5">
-                          <Button size="sm" variant="outline" disabled={!can('approve')} icon={<CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => openQc(r, 'Lolos')}>
-                            Lolos
-                          </Button>
-                          <Button size="sm" variant="ghost" disabled={!can('approve')} icon={<XCircle className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => openQc(r, 'Ditolak')}>
-                            Ditolak
-                          </Button>
-                        </div>
+                        <Badge text={r.qc_status} type={r.qc_status === 'Lolos' ? 'ok' : r.qc_status === 'Ditolak' ? 'bad' : 'warn'} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {r.qc_status === 'Menunggu' ? (
+                          <div className="flex justify-end gap-1.5">
+                            <Button size="sm" variant="outline" disabled={!can('approve')} icon={<CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => openQc(r, 'Lolos')}>
+                              Lolos
+                            </Button>
+                            <Button size="sm" variant="ghost" disabled={!can('approve')} icon={<XCircle className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => openQc(r, 'Ditolak')}>
+                              Ditolak
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="text-right text-[12px] text-muted">
+                            {r.aset_kode ? <>Menjadi aset <span className="font-mono">{r.aset_kode}</span></> : '—'}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -183,7 +188,7 @@ export default function GudangTransit() {
           <PackageCheck className="h-5 w-5 shrink-0 text-brand" strokeWidth={1.8} />
           <div>
             <div className="font-semibold">{qcTarget?.nama_barang}</div>
-            <div className="text-[12px] text-muted">{qcTarget?.qty} {qcTarget?.satuan ?? ''} · {qcTarget?.kode_barang ?? `GDG-${qcTarget?.id}`}</div>
+            <div className="text-[12px] text-muted">{qcTarget?.qty} unit · {qcTarget?.pengirim ?? '-'}</div>
           </div>
         </div>
 

@@ -4,6 +4,7 @@ import { useToast } from '@/context/ToastContext';
 import { formatRupiah, formatNumber } from '@/lib/utils';
 import { PageHeader, Button, Field, Select, Input, EmptyState, Skeleton } from '@/components/ui';
 import { FileText, Printer, Download, MapPin, FileSpreadsheet } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 interface Lokasi { id: number; nama: string; gedung?: string | null; lantai?: string | null }
 interface KirItem {
@@ -82,33 +83,34 @@ export default function LaporanKIR() {
     }
   };
 
-  // Export Excel (.xls) — Excel membuka tabel HTML sebagai spreadsheet asli
+  // Export Excel (.xlsx asli) via SheetJS
   const exportExcel = () => {
     if (!data) return;
-    const esc = (v: unknown) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    let html = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8" /></head><body>`;
-    html += `<table border="1"><thead><tr>
-      <th>Kode</th><th>Nama Barang</th><th>Merk/Tipe</th><th>Kategori</th>
-      <th>Jml</th><th>Nilai (Rp)</th><th>Kondisi</th><th>Keterangan</th>
-    </tr></thead><tbody>`;
+    const rows: (string | number)[][] = [[
+      'Kode', 'Nama Barang', 'Merk/Tipe', 'Kategori', 'Jml', 'Nilai (Rp)', 'Kondisi', 'Keterangan',
+    ]];
     for (const [, items] of groups) {
       for (const it of items) {
-        html += `<tr>
-          <td>${esc(it.kode)}</td><td>${esc(it.nama)}</td><td>${esc([it.merk, it.tipe].filter(Boolean).join(' ') || '-')}</td>
-          <td>${esc(it.kategori || '-')}</td><td>${it.jumlah ?? 1}</td><td>${esc(it.nilai ?? 0)}</td>
-          <td>${esc(it.kondisi)}</td><td>${esc(it.keterangan || '-')}</td>
-        </tr>`;
+        rows.push([
+          it.kode,
+          it.nama,
+          [it.merk, it.tipe].filter(Boolean).join(' ') || '-',
+          it.kategori || '-',
+          it.jumlah ?? 1,
+          Number(it.nilai ?? 0),
+          it.kondisi,
+          it.keterangan || '-',
+        ]);
       }
     }
-    html += `</tbody></table></body></html>`;
-    const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `KIR_${data.lokasi.nama.replace(/[^\w-]+/g, '_')}_${year}.xls`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast('Excel berhasil diunduh', 'success');
+    rows.push([]);
+    rows.push(['Total', '', '', '', data.total_jumlah, Number(data.total_nilai), '', '']);
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [{ wch: 16 }, { wch: 32 }, { wch: 20 }, { wch: 18 }, { wch: 6 }, { wch: 16 }, { wch: 12 }, { wch: 24 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'KIR');
+    XLSX.writeFile(wb, `KIR_${data.lokasi.nama.replace(/[^\w-]+/g, '_')}_${year}.xlsx`);
+    toast('Excel (.xlsx) berhasil diunduh', 'success');
   };
 
   return (
