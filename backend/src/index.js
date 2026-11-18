@@ -103,8 +103,19 @@ app.use((err, req, res, _next) => {
 });
 
 const PORT = parseInt(process.env.PORT || '3001', 10);
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, async () => {
   console.log(`[sarpras-api] listening on http://localhost:${PORT}/api`);
+
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      const { rows } = await pool.query("SELECT password_hash FROM users WHERE username = 'admin'");
+      if (rows[0] && require('bcryptjs').compareSync('admin123', rows[0].password_hash)) {
+        console.warn('[SECURITY] Password admin masih default "admin123". Ganti sebelum membuka akses publik: POST /api/auth/change-password');
+      }
+    } catch (err) {
+      console.error('[SECURITY] Gagal cek password default:', err.message);
+    }
+  }
 });
 
 // Graceful shutdown — stop accepting new connections, drain pool

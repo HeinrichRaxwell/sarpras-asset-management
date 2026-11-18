@@ -3,6 +3,7 @@ node_modules/
 .env.local
 .env.*.local
 *.log
+backups/
 backend/_debug_code.js
 
 # React frontend
