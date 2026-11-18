@@ -133,14 +133,14 @@ export default function ServisPreventif() {
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              icon={<RefreshCw className="h-4 w-4" />}
+              icon={<RefreshCw className="h-4 w-4" strokeWidth={1.8} />}
               onClick={fetchList}
               aria-label="Muat ulang"
             >
               Muat ulang
             </Button>
             <Button
-              icon={<Plus className="h-4 w-4" />}
+              icon={<Plus className="h-4 w-4" strokeWidth={1.8} />}
               onClick={() => { setForm(emptyForm); setError(''); setModalOpen(true); }}
               disabled={!can('read')}
             >
@@ -155,7 +155,7 @@ export default function ServisPreventif() {
         <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-brand-soft text-brand">
-              <ShieldCheck className="h-5 w-5" />
+              <ShieldCheck className="h-5 w-5" strokeWidth={1.8} />
             </div>
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">Total Jadwal</div>
@@ -166,7 +166,7 @@ export default function ServisPreventif() {
         <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-warning/15 text-warning">
-              <AlertTriangle className="h-5 w-5" />
+              <AlertTriangle className="h-5 w-5" strokeWidth={1.8} />
             </div>
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">Jatuh Tempo (halaman ini)</div>
@@ -177,7 +177,7 @@ export default function ServisPreventif() {
         <div className="glass rounded-2xl p-5">
           <div className="flex items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-success/15 text-success">
-              <CircleCheck className="h-5 w-5" />
+              <CircleCheck className="h-5 w-5" strokeWidth={1.8} />
             </div>
             <div>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">Selesai (halaman ini)</div>
@@ -191,7 +191,7 @@ export default function ServisPreventif() {
       <div className="glass rounded-2xl p-5">
         <div className="mb-4 flex items-center gap-2">
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" strokeWidth={1.8} />
             <Input
               placeholder="Cari kode aset / vendor…"
               value={search}
@@ -206,13 +206,13 @@ export default function ServisPreventif() {
               className="icon-btn" aria-label="Sebelumnya" disabled={page <= 1 || loading}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
             </button>
             <button
               className="icon-btn" aria-label="Berikutnya" disabled={page >= totalPages || loading}
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" strokeWidth={1.8} />
             </button>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function ServisPreventif() {
           <Skeleton rows={6} />
         ) : rows.length === 0 ? (
           <EmptyState
-            icon={<CalendarClock className="h-8 w-8" />}
+            icon={<CalendarClock className="h-8 w-8" strokeWidth={1.8} />}
             title="Belum ada jadwal preventif"
             hint="Klik “Jadwal Baru” untuk membuat rencana perawatan berkala."
           />
@@ -229,14 +229,14 @@ export default function ServisPreventif() {
           <div className="overflow-x-auto">
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="border-b border-line text-left text-[11px] uppercase tracking-wider text-muted">
-                  <th className="py-2.5 pr-3 font-bold">Aset</th>
-                  <th className="py-2.5 pr-3 font-bold">Terakhir</th>
-                  <th className="py-2.5 pr-3 font-bold">Jadwal Berikutnya</th>
-                  <th className="py-2.5 pr-3 font-bold">Vendor</th>
-                  <th className="py-2.5 pr-3 font-bold text-right">Biaya</th>
-                  <th className="py-2.5 pr-3 font-bold">Status</th>
-                  <th className="py-2.5 font-bold text-right">Aksi</th>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2.5.5 pr-3 font-semibold">Aset</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Terakhir</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Jadwal Berikutnya</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Vendor</th>
+                  <th className="py-2.5.5 pr-3 font-semibold text-right">Biaya</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Status</th>
+                  <th className="py-2.5.5 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -246,13 +246,13 @@ export default function ServisPreventif() {
                     <tr
                       key={r.id}
                       className={cn(
-                        'border-b border-line/60 last:border-0 transition-colors',
+                        'border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40',
                         late && 'bg-danger/[0.06]'
                       )}
                     >
                       <td className="py-3 pr-3 font-semibold">
                         <div className="flex items-center gap-2">
-                          {late && <AlertTriangle className="h-4 w-4 shrink-0 text-danger" />}
+                          {late && <AlertTriangle className="h-4 w-4 shrink-0 text-danger" strokeWidth={1.8} />}
                           {r.aset_kode}
                         </div>
                         {r.masalah && (
@@ -271,7 +271,7 @@ export default function ServisPreventif() {
                         <div className="flex justify-end gap-1.5">
                           {r.status === 'Antri' && (
                             <Button
-                              size="sm" variant="ghost" icon={<Wrench className="h-3.5 w-3.5" />}
+                              size="sm" variant="ghost" icon={<Wrench className="h-3.5 w-3.5" strokeWidth={1.8} />}
                               onClick={() => updateStatus(r.id, 'Proses')}
                             >
                               Mulai
@@ -279,7 +279,7 @@ export default function ServisPreventif() {
                           )}
                           {r.status === 'Proses' && (
                             <Button
-                              size="sm" icon={<CircleCheck className="h-3.5 w-3.5" />}
+                              size="sm" icon={<CircleCheck className="h-3.5 w-3.5" strokeWidth={1.8} />}
                               onClick={() => updateStatus(r.id, 'Selesai')}
                             >
                               Selesai
@@ -287,7 +287,7 @@ export default function ServisPreventif() {
                           )}
                           {r.status === 'Selesai' && (
                             <Button
-                              size="sm" variant="ghost" icon={<Pencil className="h-3.5 w-3.5" />}
+                              size="sm" variant="ghost" icon={<Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />}
                               onClick={() => updateStatus(r.id, 'Antri')}
                             >
                               Buka ulang

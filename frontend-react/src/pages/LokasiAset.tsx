@@ -179,12 +179,12 @@ export default function LokasiAset() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-line text-muted">
-                  <th className="py-2.5 pr-4 font-semibold">Nama Lokasi</th>
-                  <th className="py-2.5 pr-4 font-semibold">Gedung</th>
-                  <th className="py-2.5 pr-4 font-semibold">Lantai</th>
-                  <th className="py-2.5 pr-4 font-semibold">Penanggung Jawab</th>
-                  <th className="py-2.5 pr-4 font-semibold text-right">Aksi</th>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2.5.5 pr-3 font-semibold">Nama Lokasi</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Gedung</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Lantai</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Penanggung Jawab</th>
+                  <th className="py-2.5.5 pr-3 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>

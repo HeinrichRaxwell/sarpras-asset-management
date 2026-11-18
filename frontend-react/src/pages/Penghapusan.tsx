@@ -3,7 +3,7 @@ import { api, can } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
 import { formatRupiah, formatDate } from '@/lib/utils';
 import { PageHeader, Button, Modal, Field, Input, Textarea, Select, Badge, statusType, EmptyState, Skeleton } from '@/components/ui';
-import { Trash2, Plus, CheckCircle2, Info, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Trash2, Plus, CheckCircle2, Info, ChevronLeft, ChevronRight, Filter, AlertTriangle } from 'lucide-react';
 
 type Metode = 'Musnah' | 'Lelang' | 'Hibah';
 interface PenghapusanRow {
@@ -32,6 +32,8 @@ export default function Penghapusan() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
   const [ketentuan, setKetentuan] = useState('');
+  const [approveRow, setApproveRow] = useState<PenghapusanRow | null>(null);
+  const [approving, setApproving] = useState(false);
   const canApprove = can('approve');
 
   const load = useCallback(async () => {
@@ -90,16 +92,21 @@ export default function Penghapusan() {
     }
   };
 
-  const approve = async (row: PenghapusanRow) => {
-    if (!window.confirm(`Setujui penghapusan aset ${row.aset_kode} (${row.metode})? Aset akan berstatus Dihapus.`)) return;
+  const approve = async () => {
+    if (!approveRow) return;
+    setApproving(true);
+    const row = approveRow;
     try {
       const res = await api.patch(`/penghapusan/${row.id}/approve`);
       const k = (res as unknown as { ketentuan_penghapusan?: string }).ketentuan_penghapusan;
       if (k) setKetentuan(k);
       toast(k ? `Penghapusan disetujui. ${k}` : 'Penghapusan disetujui', k ? 'info' : 'success');
+      setApproveRow(null);
       load();
     } catch (e) {
       toast((e as Error).message, 'error');
+    } finally {
+      setApproving(false);
     }
   };
 
@@ -109,7 +116,7 @@ export default function Penghapusan() {
         title="Penghapusan & Lelang"
         subtitle="Usulkan dan setujui penghapusan aset (Musnah / Lelang / Hibah)."
         action={(
-          <Button icon={<Plus className="h-4 w-4" />} onClick={() => { setForm(EMPTY); setErrors({}); setModal(true); }}>
+          <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={() => { setForm(EMPTY); setErrors({}); setModal(true); }}>
             Usulkan Penghapusan
           </Button>
         )}
@@ -117,7 +124,7 @@ export default function Penghapusan() {
 
       {ketentuan && (
         <div className="glass flex items-start gap-3 rounded-2xl p-4 text-[13px]">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand" strokeWidth={1.8} />
           <div className="flex-1">
             <div className="font-semibold">Catatan Ketentuan Penghapusan Sumber Dana</div>
             <div className="mt-0.5 text-muted">{ketentuan}</div>
@@ -129,7 +136,7 @@ export default function Penghapusan() {
       <div className="glass rounded-2xl p-5">
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 text-[13px] font-semibold">
-            <Filter className="h-4 w-4 text-muted" /> Status
+            <Filter className="h-4 w-4 text-muted" strokeWidth={1.8} /> Status
           </div>
           <div className="flex flex-wrap gap-1.5">
             {['', 'Usulan', 'Disetujui', 'Ditolak'].map((s) => (
@@ -148,25 +155,25 @@ export default function Penghapusan() {
         {loading ? (
           <Skeleton rows={6} />
         ) : rows.length === 0 ? (
-          <EmptyState icon={<Trash2 className="h-8 w-8" />} title="Belum ada usulan penghapusan" hint="Klik &ldquo;Usulkan Penghapusan&rdquo; untuk membuat usulan baru." />
+          <EmptyState icon={<Trash2 className="h-8 w-8" strokeWidth={1.8} />} title="Belum ada usulan penghapusan" hint="Klik &ldquo;Usulkan Penghapusan&rdquo; untuk membuat usulan baru." />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-line text-[11px] uppercase tracking-wider text-muted">
-                  <th className="py-2.5 pr-3 font-bold">Kode Aset</th>
-                  <th className="py-2.5 pr-3 font-bold">Nama</th>
-                  <th className="py-2.5 pr-3 font-bold">Metode</th>
-                  <th className="py-2.5 pr-3 font-bold">Tanggal</th>
-                  <th className="py-2.5 pr-3 font-bold text-right">Nilai Buku</th>
-                  <th className="py-2.5 pr-3 font-bold">Status</th>
-                  <th className="py-2.5 pr-3 font-bold">Alasan</th>
-                  <th className="py-2.5 font-bold text-right">Aksi</th>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2.5.5 pr-3 font-semibold">Kode Aset</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Nama</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Metode</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Tanggal</th>
+                  <th className="py-2.5.5 pr-3 font-semibold text-right">Nilai Buku</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Status</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Alasan</th>
+                  <th className="py-2.5.5 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.id} className="border-b border-line/60 last:border-0">
+                  <tr key={r.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
                     <td className="py-3 pr-3 font-mono font-semibold">{r.aset_kode}</td>
                     <td className="py-3 pr-3">{r.aset_nama || '-'}</td>
                     <td className="py-3 pr-3"><Badge text={r.metode} type="info" /></td>
@@ -176,7 +183,7 @@ export default function Penghapusan() {
                     <td className="max-w-[200px] truncate py-3 pr-3 text-muted" title={r.alasan || ''}>{r.alasan || '-'}</td>
                     <td className="py-3 text-right">
                       {canApprove && r.status === 'Usulan' && (
-                        <Button size="sm" variant="outline" icon={<CheckCircle2 className="h-3.5 w-3.5" />} onClick={() => approve(r)}>
+                        <Button size="sm" variant="outline" icon={<CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => setApproveRow(r)}>
                           Setujui
                         </Button>
                       )}
@@ -190,9 +197,9 @@ export default function Penghapusan() {
 
         {meta.totalPages > 1 && (
           <div className="mt-4 flex items-center justify-end gap-2">
-            <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} icon={<ChevronLeft className="h-3.5 w-3.5" />}>Prev</Button>
+            <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} icon={<ChevronLeft className="h-3.5 w-3.5" strokeWidth={1.8} />}>Prev</Button>
             <span className="text-[12px] text-muted">Hal. {meta.page} / {meta.totalPages}</span>
-            <Button size="sm" variant="ghost" disabled={page >= meta.totalPages} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight className="h-3.5 w-3.5" /></Button>
+            <Button size="sm" variant="ghost" disabled={page >= meta.totalPages} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.8} /></Button>
           </div>
         )}
       </div>
@@ -233,6 +240,20 @@ export default function Penghapusan() {
             <Textarea value={form.alasan} onChange={(e) => setForm({ ...form, alasan: e.target.value })} placeholder="Alasan penghapusan (rusak berat, usang, dll.)" />
           </Field>
         </form>
+      </Modal>
+
+      <Modal open={!!approveRow} onClose={() => setApproveRow(null)} title="Setujui Penghapusan" size="sm" footer={(
+        <>
+          <Button variant="ghost" onClick={() => setApproveRow(null)}>Batal</Button>
+          <Button variant="danger" onClick={approve} disabled={approving}>{approving ? 'Memproses...' : 'Setujui'}</Button>
+        </>
+      )}>
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-danger" strokeWidth={1.8} />
+          <p className="text-[13.5px]">
+            Setujui penghapusan aset <strong>{approveRow?.aset_kode}</strong> ({approveRow?.metode})? Aset akan berstatus <strong>Dihapus</strong> dan tidak dapat dipulihkan.
+          </p>
+        </div>
       </Modal>
     </>
   );

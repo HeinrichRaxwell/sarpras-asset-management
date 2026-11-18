@@ -109,7 +109,7 @@ export default function Pengguna() {
         title="Pengguna & Peran"
         subtitle="Kelola akun pengguna sistem dan peran (admin, petugas, pimpinan)."
         action={isAdmin ? (
-          <Button icon={<Plus className="h-4 w-4" />} onClick={() => { setForm(EMPTY); setErrors({}); setCreateOpen(true); }}>
+          <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={() => { setForm(EMPTY); setErrors({}); setCreateOpen(true); }}>
             Tambah Pengguna
           </Button>
         ) : undefined}
@@ -119,24 +119,24 @@ export default function Pengguna() {
         {loading ? (
           <Skeleton rows={6} />
         ) : rows.length === 0 ? (
-          <EmptyState icon={<Users className="h-8 w-8" />} title="Tidak ada pengguna" hint={isAdmin ? 'Klik "Tambah Pengguna" untuk membuat akun baru.' : 'Hanya admin yang dapat melihat daftar pengguna.'} />
+          <EmptyState icon={<Users className="h-8 w-8" strokeWidth={1.8} />} title="Tidak ada pengguna" hint={isAdmin ? 'Klik "Tambah Pengguna" untuk membuat akun baru.' : 'Hanya admin yang dapat melihat daftar pengguna.'} />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-line text-[11px] uppercase tracking-wider text-muted">
-                  <th className="py-2.5 pr-3 font-bold">Username</th>
-                  <th className="py-2.5 pr-3 font-bold">Nama</th>
-                  <th className="py-2.5 pr-3 font-bold">Email</th>
-                  <th className="py-2.5 pr-3 font-bold">Peran</th>
-                  <th className="py-2.5 pr-3 font-bold">Status</th>
-                  <th className="py-2.5 pr-3 font-bold">Login Terakhir</th>
-                  <th className="py-2.5 font-bold text-right">Aksi</th>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2.5.5 pr-3 font-semibold">Username</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Nama</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Email</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Peran</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Status</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Login Terakhir</th>
+                  <th className="py-2.5.5 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((u) => (
-                  <tr key={u.id} className="border-b border-line/60 last:border-0">
+                  <tr key={u.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
                     <td className="py-3 pr-3 font-mono font-semibold">{u.username}</td>
                     <td className="py-3 pr-3">{u.nama}</td>
                     <td className="py-3 pr-3 text-muted">{u.email || '-'}</td>
@@ -146,14 +146,14 @@ export default function Pengguna() {
                     <td className="py-3">
                       <div className="flex justify-end gap-1.5">
                         <Button
-                          size="sm" variant="ghost" icon={<KeyRound className="h-3.5 w-3.5" />}
+                          size="sm" variant="ghost" icon={<KeyRound className="h-3.5 w-3.5" strokeWidth={1.8} />}
                           onClick={() => { setResetFor(u); setNewPw(''); setResetErr(''); }}
                         >
                           Reset
                         </Button>
                         <Button
                           size="sm" variant={u.aktif ? 'danger' : 'outline'}
-                          icon={<Power className="h-3.5 w-3.5" />}
+                          icon={<Power className="h-3.5 w-3.5" strokeWidth={1.8} />}
                           disabled={u.id === meId}
                           onClick={() => toggle(u)}
                         >
@@ -170,9 +170,9 @@ export default function Pengguna() {
 
         {isAdmin && meta.totalPages > 1 && (
           <div className="mt-4 flex items-center justify-end gap-2">
-            <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} icon={<ChevronLeft className="h-3.5 w-3.5" />}>Prev</Button>
+            <Button size="sm" variant="ghost" disabled={page <= 1} onClick={() => setPage((p) => p - 1)} icon={<ChevronLeft className="h-3.5 w-3.5" strokeWidth={1.8} />}>Prev</Button>
             <span className="text-[12px] text-muted">Hal. {meta.page} / {meta.totalPages}</span>
-            <Button size="sm" variant="ghost" disabled={page >= meta.totalPages} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight className="h-3.5 w-3.5" /></Button>
+            <Button size="sm" variant="ghost" disabled={page >= meta.totalPages} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight className="h-3.5 w-3.5" strokeWidth={1.8} /></Button>
           </div>
         )}
       </div>

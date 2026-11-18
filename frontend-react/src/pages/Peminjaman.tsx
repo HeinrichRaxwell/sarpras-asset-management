@@ -74,7 +74,7 @@ export default function Peminjaman() {
         subtitle="Kelola peminjaman aset, pantau keterlambatan & hitung denda."
         action={
           canWrite ? (
-            <Button icon={<Plus className="h-4 w-4" />} onClick={() => setCreateOpen(true)}>
+            <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={() => setCreateOpen(true)}>
               Peminjaman Baru
             </Button>
           ) : null
@@ -83,7 +83,7 @@ export default function Peminjaman() {
 
       <div className="glass rounded-2xl p-5">
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <Filter className="h-4 w-4 text-muted" />
+          <Filter className="h-4 w-4 text-muted" strokeWidth={1.8} />
           <div className="flex flex-wrap gap-2">
             {STATUS_FILTER.map((s) => (
               <button
@@ -103,7 +103,7 @@ export default function Peminjaman() {
           <Skeleton rows={6} />
         ) : rows.length === 0 ? (
           <EmptyState
-            icon={<ArrowLeftRight className="h-10 w-10" />}
+            icon={<ArrowLeftRight className="h-10 w-10" strokeWidth={1.8} />}
             title="Belum ada peminjaman"
             hint="Klik 'Peminjaman Baru' untuk mencatat peminjaman aset."
           />
@@ -111,21 +111,21 @@ export default function Peminjaman() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-line text-muted">
-                  <th className="py-2.5 pr-3 font-semibold">Aset</th>
-                  <th className="py-2.5 pr-3 font-semibold">Peminjam</th>
-                  <th className="py-2.5 pr-3 font-semibold">Pinjam</th>
-                  <th className="py-2.5 pr-3 font-semibold">Rencana Kembali</th>
-                  <th className="py-2.5 pr-3 font-semibold">Denda</th>
-                  <th className="py-2.5 pr-3 font-semibold">Status</th>
-                  <th className="py-2.5 font-semibold text-right">Aksi</th>
+                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2.5.5 pr-3 font-semibold">Aset</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Peminjam</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Pinjam</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Rencana Kembali</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Denda</th>
+                  <th className="py-2.5.5 pr-3 font-semibold">Status</th>
+                  <th className="py-2.5.5 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => {
                   const st = effectiveStatus(r);
                   return (
-                    <tr key={r.id} className="border-b border-line/60 last:border-0">
+                    <tr key={r.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
                       <td className="py-3 pr-3">
                         <div className="font-semibold">{r.aset_nama || r.aset_kode}</div>
                         <div className="text-[11px] text-muted">{r.aset_kode}</div>
@@ -142,7 +142,7 @@ export default function Peminjaman() {
                       </td>
                       <td className="py-3 text-right">
                         {r.status === 'Dipinjam' && canWrite ? (
-                          <Button size="sm" variant="outline" icon={<Undo2 className="h-3.5 w-3.5" />} onClick={() => setReturnRow(r)}>
+                          <Button size="sm" variant="outline" icon={<Undo2 className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => setReturnRow(r)}>
                             Kembalikan
                           </Button>
                         ) : (
@@ -177,7 +177,7 @@ export default function Peminjaman() {
             <div>Rencana kembali: {formatDate(returnRow.tgl_kembali_rencana)}</div>
             {lateFee(returnRow) > 0 ? (
               <div className="flex items-start gap-2 rounded-xl bg-danger/10 p-3 text-danger">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.8} />
                 <div>
                   Terlambat {lateDays(returnRow)} hari.<br />
                   Denda: <strong>{formatRupiah(lateFee(returnRow))}</strong> ({formatRupiah(DENDA_PER_HARI)}/hari)
