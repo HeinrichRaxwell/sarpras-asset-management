@@ -4,7 +4,6 @@ import { gsap } from 'gsap';
 import { api, setAuth } from '@/lib/api';
 import { Button, Field, Input } from '@/components/ui';
 import { useTheme } from '@/context/ThemeContext';
-import LoginBackground from '@/components/LoginBackground';
 import { Sun, Moon, Lock, User, Check, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 
 const FEATURES = [
@@ -61,21 +60,19 @@ export default function Login() {
 
   return (
     <div className="relative grid min-h-screen place-items-center overflow-hidden p-5">
-      {/* Background foto + overlay */}
+      {/* Background foto asli — biarkan tampil penuh, tanpa overlay ungu */}
       <div className="absolute inset-0 -z-20 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/90 via-violet-950/85 to-slate-950/90" />
-      <LoginBackground />
+      {/* Overlay tipis hanya untuk kontras tombol tema */}
+      <div className="absolute inset-0 -z-10 bg-black/20" />
 
       {/* Tombol tema */}
       <button onClick={toggle} className="icon-btn glass absolute right-5 top-5 z-10" aria-label="Ganti tema">
         {theme === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
       </button>
 
-      <div ref={cardRef} className="grid w-full max-w-[1000px] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-white/10 md:grid-cols-2">
-        {/* Sisi brand + foto */}
-        <div className="relative hidden min-h-[620px] flex-col justify-between overflow-hidden p-10 text-white md:flex">
-          <div className="absolute inset-0 -z-10 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-violet-950/75 to-slate-950/90" />
+      <div ref={cardRef} className="grid w-full max-w-[1000px] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-white/20 backdrop-blur-xl md:grid-cols-2">
+        {/* Sisi kiri: glass transparan, foto halaman tembus di belakang */}
+        <div className="relative hidden min-h-[620px] flex-col justify-between overflow-hidden bg-slate-950/45 p-10 text-white md:flex">
 
           <div className="flex items-center gap-3" data-reveal>
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 text-lg font-extrabold backdrop-blur-md">
@@ -110,24 +107,24 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Sisi form */}
-        <div className="flex flex-col justify-center p-8 md:p-10">
-          <div className="mb-1 flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-wide text-brand" data-reveal>
+        {/* Sisi form — dark solid agar konsisten & teks terbaca di atas foto */}
+        <div className="flex flex-col justify-center bg-slate-950/92 p-8 text-white md:p-10">
+          <div className="mb-1 flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-wide text-indigo-300" data-reveal>
             Portal Administrator
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight" data-reveal>Selamat datang kembali</h2>
-          <p className="mb-7 mt-1.5 text-[13px] text-muted" data-reveal>
+          <p className="mb-7 mt-1.5 text-[13px] text-slate-400" data-reveal>
             Masukkan kredensial Anda untuk mengakses konsol pengelolaan aset.
           </p>
 
           {err && (
-            <div className="mb-4 rounded-[10px] bg-danger/12 px-3 py-2.5 text-[12.5px] font-medium text-danger" data-reveal>{err}</div>
+            <div className="mb-4 rounded-[10px] bg-red-500/20 px-3 py-2.5 text-[12.5px] font-medium text-red-300" data-reveal>{err}</div>
           )}
 
           <form onSubmit={submit} className="space-y-4" noValidate data-reveal>
             <Field label="Nama Pengguna" required>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <Input
                   id="username"
                   value={username}
@@ -140,7 +137,7 @@ export default function Login() {
             </Field>
             <Field label="Kata Sandi" required>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <Input
                   id="password"
                   type={showPw ? 'text' : 'password'}
@@ -153,7 +150,7 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPw((s) => !s)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-1 text-muted"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 px-1 text-slate-400"
                   aria-label={showPw ? 'Sembunyikan password' : 'Tampilkan password'}
                 >
                   {showPw ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
@@ -165,8 +162,8 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 border-t border-line pt-4 text-[11.5px] leading-relaxed text-muted" data-reveal>
-            <strong>Akun demo (lingkungan pengembangan):</strong><br />
+          <div className="mt-6 border-t border-white/10 pt-4 text-[11.5px] leading-relaxed text-slate-400" data-reveal>
+            <strong className="text-slate-300">Akun demo (lingkungan pengembangan):</strong><br />
             Administrator <code>admin / admin123</code><br />
             Petugas <code>petugas / petugas123</code> · Pimpinan <code>pimpinan / pimpinan123</code>
           </div>
