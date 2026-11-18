@@ -92,8 +92,8 @@ export default function LaporanKIR() {
         subtitle="Kartu Inventaris Ruang — daftar aset per ruang berdasarkan tahun perolehan."
         action={(
           <div className="flex gap-2">
-            <Button variant="outline" icon={<Printer className="h-4 w-4" strokeWidth={1.8} />} onClick={() => window.print()} disabled={!data}>Cetak</Button>
-            <Button variant="outline" icon={<Download className="h-4 w-4" strokeWidth={1.8} />} onClick={exportCsv} disabled={!data}>Export CSV</Button>
+            <Button variant="outline" icon={<Printer className="h-4 w-4" />} onClick={() => window.print()} disabled={!data}>Cetak</Button>
+            <Button variant="outline" icon={<Download className="h-4 w-4" />} onClick={exportCsv} disabled={!data}>Export CSV</Button>
           </div>
         )}
       />
@@ -123,7 +123,7 @@ export default function LaporanKIR() {
 
       {!loading && !data && (
         <div className="glass rounded-2xl p-5">
-          <EmptyState icon={<FileText className="h-8 w-8" strokeWidth={1.8} />} title="Belum ada laporan" hint="Pilih lokasi dan tahun, lalu klik &ldquo;Tampilkan Laporan&rdquo;." />
+          <EmptyState icon={<FileText className="h-8 w-8" />} title="Belum ada laporan" hint="Pilih lokasi dan tahun, lalu klik &ldquo;Tampilkan Laporan&rdquo;." />
         </div>
       )}
 
@@ -132,7 +132,7 @@ export default function LaporanKIR() {
           <div className="mb-5 border-b border-line pb-4">
             <h3 className="text-lg font-extrabold tracking-tight">Kartu Inventaris Ruang</h3>
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted">
-              <span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" strokeWidth={1.8} /> {data.lokasi.nama}</span>
+              <span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {data.lokasi.nama}</span>
               {data.lokasi.gedung && <span>Gedung: {data.lokasi.gedung}</span>}
               {data.lokasi.lantai && <span>Lantai: {data.lokasi.lantai}</span>}
               <span>Tahun: {data.tahun}</span>
@@ -140,7 +140,7 @@ export default function LaporanKIR() {
           </div>
 
           {data.items.length === 0 ? (
-            <EmptyState icon={<FileText className="h-8 w-8" strokeWidth={1.8} />} title="Tidak ada aset" hint={`Tidak ditemukan aset di ${data.lokasi.nama} untuk tahun ${data.tahun}.`} />
+            <EmptyState icon={<FileText className="h-8 w-8" />} title="Tidak ada aset" hint={`Tidak ditemukan aset di ${data.lokasi.nama} untuk tahun ${data.tahun}.`} />
           ) : (
             <div className="space-y-6">
               {groups.map(([kategori, items]) => (
@@ -149,19 +149,19 @@ export default function LaporanKIR() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-[13px]">
                       <thead>
-                        <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                          <th className="py-2.5 pr-3 font-semibold">Kode</th>
-                          <th className="py-2.5 pr-3 font-semibold">Nama Barang</th>
-                          <th className="py-2.5 pr-3 font-semibold">Merk / Tipe</th>
-                          <th className="py-2.5 pr-3 font-semibold text-center">Jml</th>
-                          <th className="py-2.5 pr-3 font-semibold text-right">Nilai</th>
-                          <th className="py-2.5 pr-3 font-semibold">Kondisi</th>
-                          <th className="py-2.5 font-semibold">Keterangan</th>
+                        <tr className="border-b border-line text-[11px] uppercase tracking-wider text-muted">
+                          <th className="py-2 pr-3 font-bold">Kode</th>
+                          <th className="py-2 pr-3 font-bold">Nama Barang</th>
+                          <th className="py-2 pr-3 font-bold">Merk / Tipe</th>
+                          <th className="py-2 pr-3 font-bold text-center">Jml</th>
+                          <th className="py-2 pr-3 font-bold text-right">Nilai</th>
+                          <th className="py-2 pr-3 font-bold">Kondisi</th>
+                          <th className="py-2 font-bold">Keterangan</th>
                         </tr>
                       </thead>
                       <tbody>
                         {items.map((it) => (
-                          <tr key={it.kode} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
+                          <tr key={it.kode} className="border-b border-line/60 last:border-0">
                             <td className="py-2.5 pr-3 font-mono">{it.kode}</td>
                             <td className="py-2.5 pr-3">{it.nama}</td>
                             <td className="py-2.5 pr-3 text-muted">{[it.merk, it.tipe].filter(Boolean).join(' / ') || '-'}</td>

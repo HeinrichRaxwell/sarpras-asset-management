@@ -4,7 +4,6 @@ import { api, setAuth, getToken } from '@/lib/api';
 import { Button, Field, Input } from '@/components/ui';
 import { useTheme } from '@/context/ThemeContext';
 import { Sun, Moon, Lock, User } from 'lucide-react';
-import SchoolIllustration from '@/components/SchoolIllustration';
 
 export default function Login() {
   const nav = useNavigate();
@@ -53,20 +52,23 @@ export default function Login() {
 
       <div className="glass grid w-full max-w-[940px] overflow-hidden rounded-[1.25rem] md:grid-cols-2">
         {/* Brand side */}
-        <div className="relative hidden min-h-[560px] flex-col justify-between overflow-hidden bg-gradient-to-br from-brand to-violet-500 text-white md:flex">
-          <div className="absolute inset-0 z-0">
-            <SchoolIllustration />
+        <div className="hidden min-h-[560px] flex-col justify-between bg-gradient-to-br from-brand to-violet-500 p-10 text-white md:flex">
+          <div className="grid h-13 w-13 place-items-center rounded-2xl bg-white/20 text-xl font-extrabold backdrop-blur">
+            SA
           </div>
-          <div className="relative z-10 flex flex-col justify-between p-10">
-            <div className="grid h-13 w-13 place-items-center rounded-2xl bg-white/20 text-xl font-extrabold backdrop-blur">
-              SA
-            </div>
-            <div>
-              <h1 className="mb-2 text-[30px] font-extrabold leading-[1.1] tracking-tight drop-shadow">SARPRAS AM</h1>
-              <p className="text-sm leading-relaxed opacity-95">
-                Sistem Manajemen Sarana dan Prasarana. Kelola aset organisasi dari perolehan hingga penghapusan dalam satu platform terpadu.
-              </p>
-            </div>
+          <div>
+            <h1 className="mb-3 text-[30px] font-extrabold leading-[1.1] tracking-tight">SARPRAS AM</h1>
+            <p className="text-sm leading-relaxed opacity-95">
+              Sistem Manajemen Sarana dan Prasarana. Kelola aset organisasi dari perolehan hingga penghapusan dalam satu platform terpadu.
+            </p>
+            <ul className="mt-7 space-y-3 text-[13.5px]">
+              {['Katalog aset & label QR', 'Peminjaman, mutasi & servis', 'Penyusutan & laporan KIR', 'Inventarisasi fisik & audit trail'].map((f) => (
+                <li key={f} className="flex items-center gap-2.5">
+                  <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 

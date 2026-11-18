@@ -188,10 +188,10 @@ export default function Verifikasi() {
         subtitle="Kelola sesi stock opname dan rekonsiliasi fisik vs data"
         action={
           <div className="flex items-center gap-2">
-            <Button variant="ghost" icon={<RefreshCw className="h-4 w-4" strokeWidth={1.8} />} onClick={fetchSesi} aria-label="Muat ulang">
+            <Button variant="ghost" icon={<RefreshCw className="h-4 w-4" />} onClick={fetchSesi} aria-label="Muat ulang">
               Muat ulang
             </Button>
-            <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={() => { setError(''); setCreateOpen(true); }} disabled={!can('read')}>
+            <Button icon={<Plus className="h-4 w-4" />} onClick={() => { setError(''); setCreateOpen(true); }} disabled={!can('read')}>
               Sesi Baru
             </Button>
           </div>
@@ -202,7 +202,7 @@ export default function Verifikasi() {
         <div className="glass rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2">
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" strokeWidth={1.8} />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Input
                 placeholder="Cari kode / nama sesi…"
                 value={search}
@@ -214,10 +214,10 @@ export default function Verifikasi() {
             <div className="ml-auto flex items-center gap-2 text-[12px] text-muted">
               <span>Halaman {page} / {totalPages} · {total} sesi</span>
               <button className="icon-btn" aria-label="Sebelumnya" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-                <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
+                <ChevronLeft className="h-4 w-4" />
               </button>
               <button className="icon-btn" aria-label="Berikutnya" disabled={page >= totalPages || loading} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
-                <ChevronRight className="h-4 w-4" strokeWidth={1.8} />
+                <ChevronRight className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -226,7 +226,7 @@ export default function Verifikasi() {
             <Skeleton rows={6} />
           ) : sesi.length === 0 ? (
             <EmptyState
-              icon={<ClipboardCheck className="h-8 w-8" strokeWidth={1.8} />}
+              icon={<ClipboardCheck className="h-8 w-8" />}
               title="Belum ada sesi opname"
               hint="Klik “Sesi Baru” untuk memulai inventarisasi fisik."
             />
@@ -234,15 +234,15 @@ export default function Verifikasi() {
             <div className="overflow-x-auto">
               <table className="w-full text-[13px]">
                 <thead>
-                  <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                    <th className="py-2.5.5 pr-3 font-semibold">Kode</th>
-                    <th className="py-2.5.5 pr-3 font-semibold">Nama</th>
-                    <th className="py-2.5.5 pr-3 font-semibold">Mulai</th>
-                    <th className="py-2.5.5 pr-3 font-semibold">Selesai</th>
-                    <th className="py-2.5.5 pr-3 font-semibold">Petugas</th>
-                    <th className="py-2.5.5 pr-3 text-center font-semibold">Item</th>
-                    <th className="py-2.5.5 pr-3 font-semibold">Status</th>
-                    <th className="py-2.5.5 font-semibold text-right">Aksi</th>
+                  <tr className="border-b border-line text-left text-[11px] uppercase tracking-wider text-muted">
+                    <th className="py-2.5 pr-3 font-bold">Kode</th>
+                    <th className="py-2.5 pr-3 font-bold">Nama</th>
+                    <th className="py-2.5 pr-3 font-bold">Mulai</th>
+                    <th className="py-2.5 pr-3 font-bold">Selesai</th>
+                    <th className="py-2.5 pr-3 font-bold">Petugas</th>
+                    <th className="py-2.5 pr-3 text-center font-bold">Item</th>
+                    <th className="py-2.5 pr-3 font-bold">Status</th>
+                    <th className="py-2.5 font-bold text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -266,13 +266,13 @@ export default function Verifikasi() {
                           {s.status === 'Berjalan' ? (
                             <>
                               <Button
-                                size="sm" icon={<Play className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                                size="sm" icon={<Play className="h-3.5 w-3.5" />}
                                 onClick={() => openDetail(s)}
                               >
                                 Mulai
                               </Button>
                               <Button
-                                size="sm" variant="ghost" icon={<CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                                size="sm" variant="ghost" icon={<CheckCircle2 className="h-3.5 w-3.5" />}
                                 onClick={() => finishSession(s)}
                               >
                                 Selesai
@@ -294,7 +294,7 @@ export default function Verifikasi() {
         <div className="space-y-4">
           <div className="glass rounded-2xl p-5">
             <div className="flex flex-wrap items-center gap-3">
-              <Button variant="ghost" size="sm" icon={<ArrowLeft className="h-4 w-4" strokeWidth={1.8} />} onClick={closeDetail}>
+              <Button variant="ghost" size="sm" icon={<ArrowLeft className="h-4 w-4" />} onClick={closeDetail}>
                 Kembali
               </Button>
               <div>
@@ -308,7 +308,7 @@ export default function Verifikasi() {
                 <Badge text={selected.status} type={selected.status === 'Selesai' ? 'ok' : 'info'} />
                 {selected.status === 'Berjalan' && (
                   <Button
-                    size="sm" variant="danger" icon={<CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                    size="sm" variant="danger" icon={<CheckCircle2 className="h-3.5 w-3.5" />}
                     onClick={() => finishSession(selected)}
                   >
                     Selesaikan Sesi
@@ -338,7 +338,7 @@ export default function Verifikasi() {
               <h4 className="text-[15px] font-bold">Hasil Opname</h4>
               {selected.status === 'Berjalan' && (
                 <Button
-                  size="sm" icon={<Plus className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                  size="sm" icon={<Plus className="h-3.5 w-3.5" />}
                   onClick={() => { setError(''); setItemForm(emptyItem); setRecordOpen(true); }}
                   disabled={!can('read')}
                 >
@@ -351,7 +351,7 @@ export default function Verifikasi() {
               <Skeleton rows={5} />
             ) : items.length === 0 ? (
               <EmptyState
-                icon={<Package className="h-8 w-8" strokeWidth={1.8} />}
+                icon={<Package className="h-8 w-8" />}
                 title="Belum ada item opname"
                 hint="Catat hasil pengecekan fisik untuk setiap aset."
               />
@@ -359,17 +359,17 @@ export default function Verifikasi() {
               <div className="overflow-x-auto">
                 <table className="w-full text-[13px]">
                   <thead>
-                    <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                      <th className="py-2.5.5 pr-3 font-semibold">Aset</th>
-                      <th className="py-2.5.5 pr-3 font-semibold">Hasil</th>
-                      <th className="py-2.5.5 pr-3 font-semibold">Kondisi Fisik</th>
-                      <th className="py-2.5.5 pr-3 font-semibold">Lokasi Temuan</th>
-                      <th className="py-2.5.5 font-semibold">Catatan</th>
+                    <tr className="border-b border-line text-left text-[11px] uppercase tracking-wider text-muted">
+                      <th className="py-2.5 pr-3 font-bold">Aset</th>
+                      <th className="py-2.5 pr-3 font-bold">Hasil</th>
+                      <th className="py-2.5 pr-3 font-bold">Kondisi Fisik</th>
+                      <th className="py-2.5 pr-3 font-bold">Lokasi Temuan</th>
+                      <th className="py-2.5 font-bold">Catatan</th>
                     </tr>
                   </thead>
                   <tbody>
                     {items.map((it) => (
-                      <tr key={it.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
+                      <tr key={it.id} className="border-b border-line/60 last:border-0">
                         <td className="py-3 pr-3">
                           <div className="font-semibold">{it.aset_kode}</div>
                           {it.aset_nama && <div className="text-[11.5px] text-muted">{it.aset_nama}</div>}
@@ -381,7 +381,7 @@ export default function Verifikasi() {
                         <td className="py-3 pr-3">
                           {it.lokasi_temuan ? (
                             <span className="inline-flex items-center gap-1">
-                              <MapPin className="h-3.5 w-3.5 text-muted" strokeWidth={1.8} /> {it.lokasi_temuan}
+                              <MapPin className="h-3.5 w-3.5 text-muted" /> {it.lokasi_temuan}
                             </span>
                           ) : '—'}
                         </td>

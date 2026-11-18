@@ -144,12 +144,12 @@ export default function SumberDana() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th className="py-2.5.5 pr-3 font-semibold">Nama</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Kode</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Tahun Anggaran</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Ketentuan Penghapusan</th>
-                  <th className="py-2.5.5 pr-3 font-semibold text-right">Aksi</th>
+                <tr className="border-b border-line text-muted">
+                  <th className="py-2.5 pr-4 font-semibold">Nama</th>
+                  <th className="py-2.5 pr-4 font-semibold">Kode</th>
+                  <th className="py-2.5 pr-4 font-semibold">Tahun Anggaran</th>
+                  <th className="py-2.5 pr-4 font-semibold">Ketentuan Penghapusan</th>
+                  <th className="py-2.5 pr-4 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>

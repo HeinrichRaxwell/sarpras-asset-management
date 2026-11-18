@@ -62,7 +62,7 @@ export default function Mutasi() {
         subtitle="Catat perpindahan aset antar ruang beserta BAST dan persetujuan pimpinan."
         action={
           can('read') ? (
-            <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={() => setCreateOpen(true)}>
+            <Button icon={<Plus className="h-4 w-4" />} onClick={() => setCreateOpen(true)}>
               Mutasi Baru
             </Button>
           ) : null
@@ -74,7 +74,7 @@ export default function Mutasi() {
           <Skeleton rows={6} />
         ) : rows.length === 0 ? (
           <EmptyState
-            icon={<Repeat className="h-10 w-10" strokeWidth={1.8} />}
+            icon={<Repeat className="h-10 w-10" />}
             title="Belum ada mutasi"
             hint="Klik 'Mutasi Baru' untuk mencatat perpindahan aset antar ruang."
           />
@@ -82,21 +82,21 @@ export default function Mutasi() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th className="py-2.5.5 pr-3 font-semibold">Aset</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Dari</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Ke</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Tanggal</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">No. BAST</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Status</th>
-                  <th className="py-2.5.5 font-semibold text-right">Aksi</th>
+                <tr className="border-b border-line text-muted">
+                  <th className="py-2.5 pr-3 font-semibold">Aset</th>
+                  <th className="py-2.5 pr-3 font-semibold">Dari</th>
+                  <th className="py-2.5 pr-3 font-semibold">Ke</th>
+                  <th className="py-2.5 pr-3 font-semibold">Tanggal</th>
+                  <th className="py-2.5 pr-3 font-semibold">No. BAST</th>
+                  <th className="py-2.5 pr-3 font-semibold">Status</th>
+                  <th className="py-2.5 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => {
                   const approved = !!r.disetujui_oleh;
                   return (
-                    <tr key={r.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
+                    <tr key={r.id} className="border-b border-line/60 last:border-0">
                       <td className="py-3 pr-3">
                         <div className="font-semibold">{r.aset_nama || r.aset_kode}</div>
                         <div className="text-[11px] text-muted">{r.aset_kode}</div>
@@ -110,7 +110,7 @@ export default function Mutasi() {
                       </td>
                       <td className="py-3 text-right">
                         {!approved && canApprove ? (
-                          <Button size="sm" icon={<CheckCircle2 className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => setApproveRow(r)}>
+                          <Button size="sm" icon={<CheckCircle2 className="h-3.5 w-3.5" />} onClick={() => setApproveRow(r)}>
                             Setujui
                           </Button>
                         ) : (

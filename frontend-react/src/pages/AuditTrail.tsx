@@ -90,7 +90,7 @@ export default function AuditTrail() {
         <PageHeader title="Audit Trail" subtitle="Jejak perubahan data (khusus admin)" />
         <div className="glass rounded-2xl p-5">
           <EmptyState
-            icon={<ShieldAlert className="h-8 w-8 text-danger" strokeWidth={1.8} />}
+            icon={<ShieldAlert className="h-8 w-8 text-danger" />}
             title="Akses ditolak"
             hint="Hanya administrator yang dapat melihat log audit."
           />
@@ -105,7 +105,7 @@ export default function AuditTrail() {
         title="Audit Trail"
         subtitle="Jejak immutable seluruh perubahan data sistem"
         action={
-          <Button variant="ghost" icon={<RefreshCw className="h-4 w-4" strokeWidth={1.8} />} onClick={fetchList} aria-label="Muat ulang">
+          <Button variant="ghost" icon={<RefreshCw className="h-4 w-4" />} onClick={fetchList} aria-label="Muat ulang">
             Muat ulang
           </Button>
         }
@@ -114,9 +114,9 @@ export default function AuditTrail() {
       {/* Filter panel */}
       <div className="glass rounded-2xl p-5">
         <div className="mb-3 flex items-center gap-2 text-[13px] font-bold">
-          <Filter className="h-4 w-4 text-brand" strokeWidth={1.8} /> Filter
+          <Filter className="h-4 w-4 text-brand" /> Filter
           {hasFilter && (
-            <Button size="sm" variant="ghost" icon={<X className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={resetFilters} className="ml-auto">
+            <Button size="sm" variant="ghost" icon={<X className="h-3.5 w-3.5" />} onClick={resetFilters} className="ml-auto">
               Reset
             </Button>
           )}
@@ -174,7 +174,7 @@ export default function AuditTrail() {
       <div className="glass rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between gap-2">
           <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" strokeWidth={1.8} />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <Input
               placeholder="Cari entitas / IP…"
               className="pl-9"
@@ -190,10 +190,10 @@ export default function AuditTrail() {
           <div className="flex items-center gap-2 text-[12px] text-muted">
             <span>Halaman {page} / {totalPages} · {total} log</span>
             <button className="icon-btn" aria-label="Sebelumnya" disabled={page <= 1 || loading} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-              <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
+              <ChevronLeft className="h-4 w-4" />
             </button>
             <button className="icon-btn" aria-label="Berikutnya" disabled={page >= totalPages || loading} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
-              <ChevronRight className="h-4 w-4" strokeWidth={1.8} />
+              <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function AuditTrail() {
           <Skeleton rows={8} />
         ) : rows.length === 0 ? (
           <EmptyState
-            icon={<History className="h-8 w-8" strokeWidth={1.8} />}
+            icon={<History className="h-8 w-8" />}
             title="Tidak ada log audit"
             hint="Coba ubah filter atau muat ulang halaman."
           />
@@ -210,18 +210,18 @@ export default function AuditTrail() {
           <div className="overflow-x-auto">
             <table className="w-full text-[13px]">
               <thead>
-                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th className="py-2.5.5 pr-3 font-semibold">Waktu</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Pengguna</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Entitas</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">Aksi</th>
-                  <th className="py-2.5.5 pr-3 font-semibold">IP</th>
-                  <th className="py-2.5.5 font-semibold text-right">Detail</th>
+                <tr className="border-b border-line text-left text-[11px] uppercase tracking-wider text-muted">
+                  <th className="py-2.5 pr-3 font-bold">Waktu</th>
+                  <th className="py-2.5 pr-3 font-bold">Pengguna</th>
+                  <th className="py-2.5 pr-3 font-bold">Entitas</th>
+                  <th className="py-2.5 pr-3 font-bold">Aksi</th>
+                  <th className="py-2.5 pr-3 font-bold">IP</th>
+                  <th className="py-2.5 font-bold text-right">Detail</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/40">
+                  <tr key={r.id} className="border-b border-line/60 last:border-0 transition-colors hover:bg-brand-soft/30">
                     <td className="py-3 pr-3 whitespace-nowrap tabular-nums">{formatDateTime(r.waktu)}</td>
                     <td className="py-3 pr-3">
                       <div className="font-semibold">{r.user_nama || r.username || '—'}</div>
@@ -231,7 +231,7 @@ export default function AuditTrail() {
                     </td>
                     <td className="py-3 pr-3">
                       <span className="inline-flex items-center gap-1.5">
-                        <Database className="h-3.5 w-3.5 text-muted" strokeWidth={1.8} />
+                        <Database className="h-3.5 w-3.5 text-muted" />
                         <span className="font-medium">{r.entitas}</span>
                         {r.entitas_id && <span className="text-muted">#{r.entitas_id}</span>}
                       </span>
@@ -239,14 +239,14 @@ export default function AuditTrail() {
                     <td className="py-3 pr-3"><Badge text={r.aksi} type={aksiType(r.aksi)} /></td>
                     <td className="py-3 pr-3">
                       <span className="inline-flex items-center gap-1.5 font-mono text-[12px]">
-                        <Globe className="h-3.5 w-3.5 text-muted" strokeWidth={1.8} />
+                        <Globe className="h-3.5 w-3.5 text-muted" />
                         {r.ip || '—'}
                       </span>
                     </td>
                     <td className="py-3">
                       <div className="flex justify-end">
                         <Button
-                          size="sm" variant="ghost" icon={<Eye className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                          size="sm" variant="ghost" icon={<Eye className="h-3.5 w-3.5" />}
                           onClick={() => openDetail(r)}
                         >
                           Lihat
@@ -273,9 +273,9 @@ export default function AuditTrail() {
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <InfoRow icon={<UserIcon className="h-4 w-4" />} label="Pengguna" value={detail.user_nama || detail.username || 'Sistem'} />
-              <InfoRow icon={<History className="h-4 w-4" strokeWidth={1.8} />} label="Waktu" value={formatDateTime(detail.waktu)} />
-              <InfoRow icon={<Globe className="h-4 w-4" strokeWidth={1.8} />} label="IP" value={detail.ip || '—'} />
-              <InfoRow icon={<Database className="h-4 w-4" strokeWidth={1.8} />} label="Entitas" value={`${detail.entitas}${detail.entitas_id ? ` #${detail.entitas_id}` : ''}`} />
+              <InfoRow icon={<History className="h-4 w-4" />} label="Waktu" value={formatDateTime(detail.waktu)} />
+              <InfoRow icon={<Globe className="h-4 w-4" />} label="IP" value={detail.ip || '—'} />
+              <InfoRow icon={<Database className="h-4 w-4" />} label="Entitas" value={`${detail.entitas}${detail.entitas_id ? ` #${detail.entitas_id}` : ''}`} />
             </div>
             {detail.user_agent && (
               <div>

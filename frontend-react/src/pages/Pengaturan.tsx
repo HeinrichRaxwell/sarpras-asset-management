@@ -69,7 +69,7 @@ export default function Pengaturan() {
         {/* Profil */}
         <div className="glass rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2 text-[14px] font-bold">
-            <UserCircle className="h-4 w-4 text-brand" strokeWidth={1.8} /> Profil Saya
+            <UserCircle className="h-4 w-4 text-brand" /> Profil Saya
           </div>
           {loading ? (
             <Skeleton rows={4} />
@@ -96,7 +96,7 @@ export default function Pengaturan() {
         {/* Tema */}
         <div className="glass rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2 text-[14px] font-bold">
-            {theme === 'dark' ? <Moon className="h-4 w-4 text-brand" strokeWidth={1.8} /> : <Sun className="h-4 w-4 text-brand" strokeWidth={1.8} />} Tampilan
+            {theme === 'dark' ? <Moon className="h-4 w-4 text-brand" /> : <Sun className="h-4 w-4 text-brand" />} Tampilan
           </div>
           <div className="flex items-center justify-between gap-4">
             <div className="text-[13.5px]">
@@ -106,23 +106,23 @@ export default function Pengaturan() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant={theme === 'light' ? 'primary' : 'ghost'} size="sm" icon={<Sun className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => { if (theme !== 'light') toggle(); }}>
+              <Button variant={theme === 'light' ? 'primary' : 'ghost'} size="sm" icon={<Sun className="h-3.5 w-3.5" />} onClick={() => { if (theme !== 'light') toggle(); }}>
                 Terang
               </Button>
-              <Button variant={theme === 'dark' ? 'primary' : 'ghost'} size="sm" icon={<Moon className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => { if (theme !== 'dark') toggle(); }}>
+              <Button variant={theme === 'dark' ? 'primary' : 'ghost'} size="sm" icon={<Moon className="h-3.5 w-3.5" />} onClick={() => { if (theme !== 'dark') toggle(); }}>
                 Gelap
               </Button>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-2 border-t border-line pt-4 text-[12.5px] text-muted">
-            <Monitor className="h-3.5 w-3.5" strokeWidth={1.8} /> Preferensi tema disimpan di perangkat ini.
+            <Monitor className="h-3.5 w-3.5" /> Preferensi tema disimpan di perangkat ini.
           </div>
         </div>
 
         {/* Ganti password */}
         <div className="glass rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2 text-[14px] font-bold">
-            <Lock className="h-4 w-4 text-brand" strokeWidth={1.8} /> Ganti Password
+            <Lock className="h-4 w-4 text-brand" /> Ganti Password
           </div>
           <form onSubmit={submit} className="space-y-4" noValidate>
             <Field label="Password Lama" required error={errors.oldPw}>
@@ -141,10 +141,10 @@ export default function Pengaturan() {
         {/* Keluar */}
         <div className="glass rounded-2xl p-5">
           <div className="mb-4 flex items-center gap-2 text-[14px] font-bold">
-            <LogOut className="h-4 w-4 text-danger" strokeWidth={1.8} /> Sesi
+            <LogOut className="h-4 w-4 text-danger" /> Sesi
           </div>
           <p className="mb-4 text-[13px] text-muted">Keluar dari akun dan kembali ke halaman login.</p>
-          <Button variant="danger" icon={<LogOut className="h-4 w-4" strokeWidth={1.8} />} onClick={logout}>Keluar</Button>
+          <Button variant="danger" icon={<LogOut className="h-4 w-4" />} onClick={logout}>Keluar</Button>
         </div>
       </div>
     </>
