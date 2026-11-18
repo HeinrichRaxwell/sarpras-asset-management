@@ -5,3 +5,8 @@ backend/_debug_code.js
 frontend/assets/_p/
 frontend/assets/_shell.html
 frontend/build_pages.py
+
+# React frontend
+frontend-react/node_modules/
+frontend-react/dist/
+frontend-react/build.log

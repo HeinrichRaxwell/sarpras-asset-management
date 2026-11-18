@@ -45,10 +45,10 @@ services:
     networks:
       - sarpras_net
 
-  # ---------- Frontend (static, served by nginx) ----------
+  # ---------- Frontend (React SPA, served by nginx) ----------
   web:
     build:
-      context: ./frontend
+      context: ./frontend-react
       dockerfile: Dockerfile
     container_name: sarpras_web
     restart: unless-stopped

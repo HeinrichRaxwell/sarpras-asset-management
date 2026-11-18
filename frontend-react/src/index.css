@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --color-brand: oklch(0.55 0.18 262);
+  --color-brand-soft: oklch(0.55 0.18 262 / 0.14);
+  --color-surface: oklch(0.98 0.004 250);
+  --color-surface-2: oklch(0.96 0.005 250);
+  --color-ink: oklch(0.21 0.03 260);
+  --color-muted: oklch(0.55 0.015 260);
+  --color-line: oklch(0.21 0.02 260 / 0.1);
+  --color-danger: oklch(0.58 0.2 25);
+  --color-success: oklch(0.6 0.15 150);
+  --color-warning: oklch(0.7 0.15 75);
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --glass-blur: 22px;
+  --glass-sat: 1.5;
+  --glass-opacity: 0.62;
+  --glass-tint: 255 255 255;
+  --radius-panel: 1.25rem;
+  --radius-control: 0.625rem;
+}
+
+.dark {
+  --glass-opacity: 0.08;
+  --glass-tint: 15 23 42;
+  --color-surface: oklch(0.16 0.02 260);
+  --color-surface-2: oklch(0.13 0.02 260);
+  --color-ink: oklch(0.93 0.01 260);
+  --color-muted: oklch(0.7 0.015 260);
+  --color-line: oklch(1 0 0 / 0.1);
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html, body, #root { height: 100%; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-variant-numeric: tabular-nums;
+    overflow-x: hidden;
+  }
+  /* Decorative blurred orbs behind glass */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    border-radius: 9999px;
+    filter: blur(90px);
+    z-index: -1;
+    pointer-events: none;
+  }
+  body::before {
+    width: 30rem; height: 30rem;
+    top: -6rem; left: -6rem;
+    background: radial-gradient(circle, oklch(0.55 0.18 262 / 0.35), transparent 70%);
+  }
+  body::after {
+    width: 34rem; height: 34rem;
+    bottom: -10rem; right: -8rem;
+    background: radial-gradient(circle, oklch(0.6 0.16 300 / 0.28), transparent 70%);
+  }
+}
+
+@utility glass {
+  background: rgb(var(--glass-tint) / var(--glass-opacity));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  border: 1px solid oklch(1 0 0 / 0.45);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.55),
+    0 20px 50px -24px oklch(0.21 0.03 260 / 0.28);
+}
+.dark .glass {
+  background: rgb(var(--glass-tint) / var(--glass-opacity));
+  border-color: oklch(1 0 0 / 0.1);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.08),
+    0 20px 50px -24px oklch(0 0 0 / 0.6);
+}
+
+/* Custom utility classes used across the app */
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  border: 1px solid var(--color-line);
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.icon-btn:hover { background: var(--color-brand-soft); }
+.avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--color-brand), #7c3aed);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: oklch(0.21 0.02 260 / 0.18);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+.dark ::-webkit-scrollbar-thumb { background: oklch(1 0 0 / 0.2); background-clip: content-box; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
