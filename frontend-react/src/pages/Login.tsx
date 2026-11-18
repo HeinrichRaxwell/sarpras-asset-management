@@ -63,7 +63,7 @@ export default function Login() {
     <div className="relative grid min-h-screen place-items-center overflow-hidden p-5">
       {/* Background foto + overlay */}
       <div className="absolute inset-0 -z-20 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-slate-900/70 to-indigo-950/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/90 via-violet-950/85 to-slate-950/90" />
       <LoginBackground />
 
       {/* Tombol tema */}
@@ -71,11 +71,11 @@ export default function Login() {
         {theme === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
       </button>
 
-      <div ref={cardRef} className="glass grid w-full max-w-[1000px] overflow-hidden rounded-[1.75rem] shadow-2xl md:grid-cols-2">
+      <div ref={cardRef} className="grid w-full max-w-[1000px] overflow-hidden rounded-[1.75rem] shadow-2xl ring-1 ring-white/10 md:grid-cols-2">
         {/* Sisi brand + foto */}
         <div className="relative hidden min-h-[620px] flex-col justify-between overflow-hidden p-10 text-white md:flex">
           <div className="absolute inset-0 -z-10 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-violet-950/70 to-slate-950/85" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-violet-950/75 to-slate-950/90" />
 
           <div className="flex items-center gap-3" data-reveal>
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 text-lg font-extrabold backdrop-blur-md">

@@ -1,9 +1,9 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   LayoutDashboard, Package, Warehouse, Tags, MapPin, TrendingDown, Wallet,
   ArrowLeftRight, Repeat, Wrench, ShieldCheck, ClipboardCheck, History,
-  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, Menu, X,
+  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, Menu, X, PanelLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getUser, clearAuth } from '@/lib/api';
@@ -64,22 +64,38 @@ const NAV: NavGroup[] = [
 
 export function AppShell({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const { theme, toggle } = useTheme();
   const navigate = useNavigate();
   const user = getUser();
+  const navScrollRef = useRef<HTMLDivElement>(null);
 
   const logout = async () => {
     clearAuth();
     navigate('/login');
   };
 
+  // Simpan posisi scroll nav; restore saat kembali ke shell (anti scroll-jump)
+  useEffect(() => {
+    const el = navScrollRef.current;
+    if (!el) return;
+    const saved = Number(sessionStorage.getItem('sarpras_nav_scroll') ?? '0');
+    el.scrollTop = saved;
+    const onScroll = () => sessionStorage.setItem('sarpras_nav_scroll', String(el.scrollTop));
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
   const Nav = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <nav className="flex-1 overflow-y-auto px-2 pb-4">
+    <div ref={navScrollRef} className="flex-1 overflow-y-auto overflow-x-hidden px-2 pb-4">
       {NAV.map((group, gi) => (
         <div key={gi} className="mb-1">
           {group.label && (
-            <div className="px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted">
-              {group.label}
+            <div className={cn(
+              'px-3 pt-3 pb-1.5 text-[10px] font-bold uppercase tracking-widest text-muted',
+              collapsed && 'px-0 text-center'
+            )}>
+              {collapsed ? '•' : group.label}
             </div>
           )}
           {group.items
@@ -89,9 +105,11 @@ export function AppShell({ title }: { title: string }) {
                 key={it.to}
                 to={it.to}
                 onClick={onNavigate}
+                title={collapsed ? it.label : undefined}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-2.5 rounded-[10px] px-3 py-2 text-[13.5px] font-medium transition-colors',
+                    'group relative flex items-center gap-2.5 rounded-[10px] font-medium transition-colors',
+                    collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2 text-[13.5px]',
                     isActive
                       ? 'bg-brand text-white shadow-sm'
                       : 'text-ink hover:bg-brand-soft'
@@ -99,12 +117,17 @@ export function AppShell({ title }: { title: string }) {
                 }
               >
                 <it.icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.8} />
-                <span>{it.label}</span>
+                {!collapsed && <span className="truncate">{it.label}</span>}
+                {collapsed && (
+                  <span className="pointer-events-none absolute left-full z-50 ml-2 hidden whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-[11.5px] font-medium text-white shadow-lg group-hover:block">
+                    {it.label}
+                  </span>
+                )}
               </NavLink>
             ))}
         </div>
       ))}
-    </nav>
+    </div>
   );
 
   return (
@@ -120,19 +143,22 @@ export function AppShell({ title }: { title: string }) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'glass fixed inset-y-0 left-0 z-50 flex w-[264px] flex-col rounded-r-[1.25rem] transition-transform duration-300 lg:translate-x-0',
+          'glass fixed inset-y-0 left-0 z-50 flex flex-col rounded-r-[1.25rem] transition-[transform,width] duration-300 lg:translate-x-0',
+          collapsed ? 'w-[76px]' : 'w-[264px]',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center gap-2.5 px-3 py-5">
+        <div className={cn('flex items-center gap-2.5 px-3 py-5', collapsed && 'justify-center px-2')}>
           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brand to-violet-500 text-[13px] font-extrabold text-white">
             SA
           </div>
-          <div className="leading-tight">
-            <div className="text-[14px] font-bold tracking-tight">SARPRAS AM</div>
-            <div className="text-[10px] text-muted">Asset Management</div>
-          </div>
-          <button className="ml-auto lg:hidden" onClick={() => setOpen(false)} aria-label="Tutup menu">
+          {!collapsed && (
+            <div className="leading-tight">
+              <div className="text-[14px] font-bold tracking-tight">SARPRAS AM</div>
+              <div className="text-[10px] text-muted">Asset Management</div>
+            </div>
+          )}
+          <button className={cn('ml-auto lg:hidden', collapsed && 'hidden')} onClick={() => setOpen(false)} aria-label="Tutup menu">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -140,17 +166,30 @@ export function AppShell({ title }: { title: string }) {
         <div className="px-2 pb-4">
           <button
             onClick={logout}
-            className="flex w-full items-center gap-2.5 rounded-[10px] px-3 py-2 text-[13.5px] font-medium text-danger transition-colors hover:bg-danger/10"
+            title={collapsed ? 'Keluar' : undefined}
+            className={cn(
+              'flex w-full items-center gap-2.5 rounded-[10px] py-2 text-[13.5px] font-medium text-danger transition-colors hover:bg-danger/10',
+              collapsed ? 'justify-center px-0' : 'px-3'
+            )}
           >
             <LogOut className="h-[18px] w-[18px]" strokeWidth={1.8} />
-            Keluar
+            {!collapsed && 'Keluar'}
           </button>
         </div>
       </aside>
 
       {/* Main */}
-      <div className="flex min-w-0 flex-1 flex-col lg:ml-[264px]">
+      <div className={cn('flex min-w-0 flex-1 flex-col transition-[margin] duration-300', collapsed ? 'lg:ml-[76px]' : 'lg:ml-[264px]')}>
         <header className="glass sticky top-0 z-30 flex h-16 items-center gap-3 rounded-none border-x-0 border-t-0 px-5">
+          {/* Minimize toggle (desktop) */}
+          <button
+            className="icon-btn hidden lg:grid"
+            onClick={() => setCollapsed((s) => !s)}
+            aria-label={collapsed ? 'Perluas sidebar' : 'Perkecil sidebar'}
+          >
+            <PanelLeft className="h-5 w-5" strokeWidth={1.8} />
+          </button>
+          {/* Mobile toggle */}
           <button className="icon-btn lg:hidden" onClick={() => setOpen(true)} aria-label="Buka menu">
             <Menu className="h-5 w-5" />
           </button>
