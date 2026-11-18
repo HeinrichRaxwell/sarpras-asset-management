@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api, setAuth, getToken } from '@/lib/api';
+import { gsap } from 'gsap';
+import { api, setAuth } from '@/lib/api';
 import { Button, Field, Input } from '@/components/ui';
 import { useTheme } from '@/context/ThemeContext';
-import { Sun, Moon, Lock, User } from 'lucide-react';
+import LoginBackground from '@/components/LoginBackground';
+import { Sun, Moon, Lock, User, Check, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+
+const FEATURES = [
+  'Inventarisasi & pelacakan aset real-time',
+  'Alur peminjaman, mutasi & perawatan',
+  'Depresiasi otomatis & pelaporan KIR',
+  'Jejak audit lengkap & kontrol akses berjenjang',
+];
 
 export default function Login() {
   const nav = useNavigate();
@@ -13,10 +22,20 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false);
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  if (getToken()) {
-    nav('/dashboard');
-  }
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+    const els = cardRef.current?.querySelectorAll('[data-reveal]');
+    if (els?.length) {
+      gsap.fromTo(
+        els,
+        { y: 16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, stagger: 0.07, ease: 'power3.out', delay: 0.15 },
+      );
+    }
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,11 +46,11 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const res = await api.post<{ token: string; user: any }>('/auth/login', {
-        username: username.trim(), password,
+      const res = await api.post<{ token: string; user: never }>('/auth/login', {
+        username: username.trim(),
+        password,
       });
-      // Backend mengembalikan token & user di root (bukan di dalam data)
-      setAuth((res as any).token ?? res.data!.token, (res as any).user ?? res.data!.user);
+      setAuth((res as { token?: string }).token ?? res.data!.token, (res as { user?: never }).user ?? res.data!.user);
       nav('/dashboard');
     } catch (e) {
       setErr((e as Error).message);
@@ -41,82 +60,115 @@ export default function Login() {
   };
 
   return (
-    <div className="grid min-h-screen place-items-center p-5">
-      <button
-        onClick={toggle}
-        className="icon-btn absolute right-5 top-5"
-        aria-label="Ganti tema"
-      >
+    <div className="relative grid min-h-screen place-items-center overflow-hidden p-5">
+      {/* Background foto + overlay */}
+      <div className="absolute inset-0 -z-20 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-slate-900/70 to-indigo-950/85 backdrop-blur-sm" />
+      <LoginBackground />
+
+      {/* Tombol tema */}
+      <button onClick={toggle} className="icon-btn glass absolute right-5 top-5 z-10" aria-label="Ganti tema">
         {theme === 'dark' ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
       </button>
 
-      <div className="glass grid w-full max-w-[940px] overflow-hidden rounded-[1.25rem] md:grid-cols-2">
-        {/* Brand side */}
-        <div className="hidden min-h-[560px] flex-col justify-between bg-gradient-to-br from-brand to-violet-500 p-10 text-white md:flex">
-          <div className="grid h-13 w-13 place-items-center rounded-2xl bg-white/20 text-xl font-extrabold backdrop-blur">
-            SA
+      <div ref={cardRef} className="glass grid w-full max-w-[1000px] overflow-hidden rounded-[1.75rem] shadow-2xl md:grid-cols-2">
+        {/* Sisi brand + foto */}
+        <div className="relative hidden min-h-[620px] flex-col justify-between overflow-hidden p-10 text-white md:flex">
+          <div className="absolute inset-0 -z-10 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-950/85 via-violet-950/70 to-slate-950/85" />
+
+          <div className="flex items-center gap-3" data-reveal>
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 text-lg font-extrabold backdrop-blur-md">
+              SA
+            </div>
+            <div>
+              <div className="text-sm font-bold tracking-tight">SARPRAS AM</div>
+              <div className="text-[11.5px] opacity-70">Enterprise Asset Management</div>
+            </div>
           </div>
+
           <div>
-            <h1 className="mb-3 text-[30px] font-extrabold leading-[1.1] tracking-tight">SARPRAS AM</h1>
-            <p className="text-sm leading-relaxed opacity-95">
-              Sistem Manajemen Sarana dan Prasarana. Kelola aset organisasi dari perolehan hingga penghapusan dalam satu platform terpadu.
+            <h1 className="mb-3 text-[34px] font-extrabold leading-[1.08] tracking-tight" data-reveal>
+              Satu platform<br />untuk seluruh<br />aset organisasi.
+            </h1>
+            <p className="max-w-[380px] text-sm leading-relaxed opacity-90" data-reveal>
+              Pengelolaan aset dari perolehan hingga penghapusan — terdokumentasi, terlacak, dan tervalidasi dalam satu sistem terpadu.
             </p>
-            <ul className="mt-7 space-y-3 text-[13.5px]">
-              {['Katalog aset & label QR', 'Peminjaman, mutasi & servis', 'Penyusutan & laporan KIR', 'Inventarisasi fisik & audit trail'].map((f) => (
-                <li key={f} className="flex items-center gap-2.5">
-                  <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+            <ul className="mt-7 space-y-3 text-[13px]" data-reveal>
+              {FEATURES.map((f) => (
+                <li key={f} className="flex items-center gap-2.5 opacity-90">
+                  <Check className="h-4 w-4 shrink-0 text-emerald-300" strokeWidth={2.5} />
                   {f}
                 </li>
               ))}
             </ul>
           </div>
+
+          <div className="flex items-center gap-2 text-[11px] opacity-60" data-reveal>
+            <ShieldCheck className="h-3.5 w-3.5" />
+            Keamanan berlapis · Sesi terenkripsi · Jejak audit penuh
+          </div>
         </div>
 
-        {/* Form side */}
+        {/* Sisi form */}
         <div className="flex flex-col justify-center p-8 md:p-10">
-          <h2 className="text-2xl font-extrabold tracking-tight">Masuk</h2>
-          <p className="mb-7 mt-1.5 text-[13.5px] text-muted">Gunakan akun terdaftar untuk mengakses panel admin.</p>
+          <div className="mb-1 flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-wide text-brand" data-reveal>
+            Portal Administrator
+          </div>
+          <h2 className="text-2xl font-extrabold tracking-tight" data-reveal>Selamat datang kembali</h2>
+          <p className="mb-7 mt-1.5 text-[13px] text-muted" data-reveal>
+            Masukkan kredensial Anda untuk mengakses konsol pengelolaan aset.
+          </p>
 
           {err && (
-            <div className="mb-4 rounded-[10px] bg-danger/12 px-3 py-2.5 text-[12.5px] font-medium text-danger">{err}</div>
+            <div className="mb-4 rounded-[10px] bg-danger/12 px-3 py-2.5 text-[12.5px] font-medium text-danger" data-reveal>{err}</div>
           )}
 
-          <form onSubmit={submit} className="space-y-4" noValidate>
-            <Field label="Username" required>
+          <form onSubmit={submit} className="space-y-4" noValidate data-reveal>
+            <Field label="Nama Pengguna" required>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 <Input
-                  id="username" value={username} onChange={(e) => setUsername(e.target.value)}
-                  className="pl-9" placeholder="username" autoComplete="username"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="pl-9"
+                  placeholder="nama pengguna"
+                  autoComplete="username"
                 />
               </div>
             </Field>
-            <Field label="Password" required>
+            <Field label="Kata Sandi" required>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 <Input
-                  id="password" type={showPw ? 'text' : 'password'} value={password}
-                  onChange={(e) => setPassword(e.target.value)} className="pl-9 pr-9"
-                  placeholder="••••••••" autoComplete="current-password"
+                  id="password"
+                  type={showPw ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-9 pr-10"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
                 />
                 <button
-                  type="button" onClick={() => setShowPw((s) => !s)}
+                  type="button"
+                  onClick={() => setShowPw((s) => !s)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 px-1 text-muted"
-                  aria-label="Tampilkan password"
+                  aria-label={showPw ? 'Sembunyikan password' : 'Tampilkan password'}
                 >
-                  <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                  {showPw ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
                 </button>
               </div>
             </Field>
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
-              {loading ? 'Memproses...' : 'Masuk'}
+              {loading ? 'Memverifikasi…' : 'Masuk ke Sistem'}
             </Button>
           </form>
 
-          <div className="mt-6 border-t border-line pt-4 text-[11.5px] leading-relaxed text-muted">
-            <strong>Akun default (development):</strong><br />
-            Admin <code>admin / admin123</code> · Petugas <code>petugas / petugas123</code><br />
-            Pimpinan <code>pimpinan / pimpinan123</code>
+          <div className="mt-6 border-t border-line pt-4 text-[11.5px] leading-relaxed text-muted" data-reveal>
+            <strong>Akun demo (lingkungan pengembangan):</strong><br />
+            Administrator <code>admin / admin123</code><br />
+            Petugas <code>petugas / petugas123</code> · Pimpinan <code>pimpinan / pimpinan123</code>
           </div>
         </div>
       </div>
