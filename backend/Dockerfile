@@ -8,7 +8,9 @@ COPY package.json package-lock.json* ./
 RUN npm ci --omit=dev || npm install --omit=dev
 
 # Copy source
-COPY src ./src
+COPY --chown=node:node src ./src
+
+USER node
 
 EXPOSE 3001
 

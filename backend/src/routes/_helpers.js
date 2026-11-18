@@ -18,7 +18,7 @@ function validate(schema, data, res) {
     return { ok: true, value: schema.parse(data) };
   } catch (err) {
     if (err instanceof ZodError) {
-      const detail = err.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const detail = err.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ');
       res.status(400).json({ ok: false, error: `Validasi gagal: ${detail}` });
       return { ok: false };
     }

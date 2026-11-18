@@ -188,7 +188,19 @@ router.delete('/:kode', authorize('admin'), wrap(async (req, res) => {
   if (!before) throw new HttpError(404, 'Aset tidak ditemukan');
 
   if (req.query.hard === 'true') {
-    await query('DELETE FROM aset WHERE kode = $1', [req.params.kode]);
+    await withTransaction(async (client) => {
+      // Anak-anak aset tidak punya ON DELETE CASCADE; hapus eksplisit supaya
+      // hard delete tidak gagal kena FK constraint.
+      await client.query('DELETE FROM dokumen WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM asset_log WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM opname_item WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM penyusutan WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM peminjaman WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM mutasi WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM servis WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM penghapusan WHERE aset_kode = $1', [req.params.kode]);
+      await client.query('DELETE FROM aset WHERE kode = $1', [req.params.kode]);
+    });
     await audit(req, 'aset', req.params.kode, 'DELETE', before, null);
     return res.json({ ok: true, data: { kode: req.params.kode, hard: true } });
   }

@@ -5,6 +5,12 @@ const { query } = require('../db');
 const JWT_SECRET = process.env.JWT_SECRET || 'change_this_secret_in_production';
 const JWT_EXPIRES = process.env.JWT_EXPIRES || '7d';
 
+// Refuse to boot in production with the known placeholder secret.
+if (process.env.NODE_ENV === 'production' && JWT_SECRET === 'change_this_secret_in_production') {
+  console.error('[FATAL] JWT_SECRET belum di-set. API menolak start di production.');
+  process.exit(1);
+}
+
 // Sign a JWT for a user
 function signToken(user) {
   return jwt.sign(
