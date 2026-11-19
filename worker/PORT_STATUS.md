@@ -21,6 +21,24 @@
 
 Secrets Worker: `JWT_SECRET`, `JWT_EXPIRES`, `BCRYPT_ROUNDS` (diset via `wrangler secret bulk`, file plaintext sudah dihapus).
 
+## Akun
+
+| Username | Role | Akses |
+|---|---|---|
+| `Raxwell` | admin | penuh (owner tunggal) |
+| `demo-admin` | admin | pratinjau, read-only |
+| `demo-petugas` | petugas | pratinjau, read-only |
+| `demo-pimpinan` | pimpinan | pratinjau, read-only |
+
+Password tidak disimpan di repo. Akun lama (`admin`/`petugas`/`pimpinan`) sudah dihapus.
+
+Read-only dipaksa di **server**: `authenticate` membaca flag dari DB tiap request,
+middleware menolak semua metode tulis, dan `authorize()` menolak sebagai lapis kedua.
+UI menyembunyikan tombol tulis lewat `can('write')` — bukan sekadar disabled.
+
+Verifikasi: `python qa_accounts.py <creds.json>` (104 cek) dan
+`node qa_ui_readonly.cjs <creds.json> <ownerPassword>` (68 cek, 16 halaman × 4 akun).
+
 ## Verifikasi
 
 - `python qa_worker.py https://sarpras.heinrichraxwell.my.id` → **66/66 PASS**
