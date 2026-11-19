@@ -1,0 +1,24 @@
+name = "sarpras"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Frontend React hasil build di-serve sebagai static assets oleh Worker yang sama,
+# jadi satu origin: tidak perlu CORS dan token tidak lintas domain.
+[assets]
+directory = "../frontend-react/dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sarpras-db"
+database_id = "bd3e8d59-e3ed-4464-9be0-4cd703b90906"
+migrations_dir = "migrations"
+
+[vars]
+NODE_ENV = "production"
+
+[observability]
+enabled = true

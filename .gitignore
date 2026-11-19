@@ -10,3 +10,10 @@ backend/_debug_code.js
 frontend-react/node_modules/
 frontend-react/dist/
 frontend-react/build.log
+
+.dev.vars
+worker/.wrangler/
+wrangler_install.log
+deps_install.log
+
+.secrets.json
