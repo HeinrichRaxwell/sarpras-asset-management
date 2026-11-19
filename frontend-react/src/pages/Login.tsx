@@ -163,9 +163,13 @@ export default function Login() {
           </form>
 
           <div className="mt-6 border-t border-white/10 pt-4 text-[11.5px] leading-relaxed text-slate-400" data-reveal>
-            <strong className="text-slate-300">Akun demo (lingkungan pengembangan):</strong><br />
-            Administrator <code>admin / admin123</code><br />
-            Petugas <code>petugas / petugas123</code> · Pimpinan <code>pimpinan / pimpinan123</code>
+            <strong className="text-slate-300">Akun pratinjau (hanya lihat data):</strong><br />
+            Admin <code>demo-admin / demo-admin123</code><br />
+            Petugas <code>demo-petugas / demo-petugas123</code><br />
+            Pimpinan <code>demo-pimpinan / demo-pimpinan123</code>
+            <p className="mt-2 text-[11px] text-slate-500">
+              Aksi tambah, ubah, dan hapus dinonaktifkan pada akun pratinjau agar data tetap utuh.
+            </p>
           </div>
         </div>
       </div>
