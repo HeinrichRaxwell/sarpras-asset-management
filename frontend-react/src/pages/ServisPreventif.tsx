@@ -142,7 +142,7 @@ export default function ServisPreventif() {
             <Button
               icon={<Plus className="h-4 w-4" />}
               onClick={() => { setForm(emptyForm); setError(''); setModalOpen(true); }}
-              disabled={!can('read')}
+              disabled={!can('write')}
             >
               Jadwal Baru
             </Button>

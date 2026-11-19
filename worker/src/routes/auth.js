@@ -12,7 +12,7 @@ export function authRoutes({ db, auth, env }) {
     if (!username || !password) throw new HttpError(400, 'Username dan password wajib diisi');
 
     const { rows } = await db.query(
-      'SELECT id, username, password_hash, nama, role, aktif FROM users WHERE username = $1',
+      'SELECT id, username, password_hash, nama, role, aktif, read_only FROM users WHERE username = $1',
       [String(username).trim()]
     );
     const user = rows[0];
@@ -29,13 +29,13 @@ export function authRoutes({ db, auth, env }) {
     return c.json({
       ok: true,
       token,
-      user: { id: user.id, username: user.username, nama: user.nama, role: user.role },
+      user: { id: user.id, username: user.username, nama: user.nama, role: user.role, read_only: !!user.read_only },
     });
   });
 
   r.get('/me', auth.authenticate, async (c) => {
     const { rows } = await db.query(
-      'SELECT id, username, nama, email, role, last_login FROM users WHERE id = $1',
+      'SELECT id, username, nama, email, role, read_only, last_login FROM users WHERE id = $1',
       [c.get('user').id]
     );
     if (!rows[0]) throw new HttpError(404, 'User tidak ditemukan');

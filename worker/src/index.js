@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { makeDb } from './db.js';
 import { makeAuth } from './auth.js';
+import { verifyToken } from './jwt.js';
 import { HttpError } from './helpers.js';
 import { authRoutes } from './routes/auth.js';
 import { kategoriRoutes, sumberDanaRoutes } from './routes/kategori.js';
@@ -83,7 +84,7 @@ export default {
     let ctxDeps;
     try {
       const db = makeDb(env.DB);
-      const auth = makeAuth(env);
+      const auth = makeAuth(env, db);
       ctxDeps = { db, auth, env };
     } catch (err) {
       console.error(err.message);
@@ -104,6 +105,28 @@ export default {
         return c.json({ ok: false, error: 'Terlalu banyak permintaan.' }, 429);
       }
       await next();
+    });
+
+    // Semua metode tulis diblokir untuk akun read-only, termasuk endpoint yang
+    // hanya memakai authenticate (mis. change-password) tanpa authorize.
+    const WRITE_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+    const WRITE_EXEMPT = new Set(['/api/auth/login', '/api/auth/logout']);
+    app.use('/api/*', async (c, next) => {
+      if (!WRITE_METHODS.has(c.req.method) || WRITE_EXEMPT.has(new URL(c.req.url).pathname)) {
+        return next();
+      }
+      const header = c.req.header('authorization') || '';
+      if (!header.startsWith('Bearer ')) return next();
+      try {
+        const claims = await verifyToken(header.slice(7), env.JWT_SECRET);
+        const row = await ctxDeps.db.query('SELECT read_only FROM users WHERE id = $1', [claims.id]);
+        if (row.rows[0]?.read_only) {
+          return c.json({ ok: false, error: 'Akun demo hanya dapat melihat data. Perubahan tidak diizinkan.' }, 403);
+        }
+      } catch {
+        // Token invalid ditangani authenticate di route terkait.
+      }
+      return next();
     });
 
     app.route('/api/auth', authRoutes(ctxDeps));

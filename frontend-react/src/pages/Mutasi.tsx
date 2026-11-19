@@ -61,7 +61,7 @@ export default function Mutasi() {
         title="Mutasi Antar-Ruang"
         subtitle="Catat perpindahan aset antar ruang beserta BAST dan persetujuan pimpinan."
         action={
-          can('read') ? (
+          can('write') ? (
             <Button icon={<Plus className="h-4 w-4" />} onClick={() => setCreateOpen(true)}>
               Mutasi Baru
             </Button>

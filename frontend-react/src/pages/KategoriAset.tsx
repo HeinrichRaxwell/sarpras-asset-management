@@ -85,7 +85,7 @@ export default function KategoriAset() {
     }
   };
 
-  const canWrite = can('read');
+  const canWrite = can('write');
 
   return (
     <>
@@ -117,12 +117,16 @@ export default function KategoriAset() {
                     {k.deskripsi && <p className="mt-1 line-clamp-2 text-[12px] text-muted">{k.deskripsi}</p>}
                   </div>
                   <div className="flex shrink-0 gap-1 opacity-0 transition group-hover:opacity-100">
-                    <button onClick={() => { setForm({ ...k }); setEditingId(k.id); setErrors({}); }} className="icon-btn h-7 w-7" aria-label="Edit" title="Edit">
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />
-                    </button>
-                    <button onClick={() => setConfirmDel(k)} className="icon-btn h-7 w-7 text-danger hover:bg-danger/10" aria-label="Hapus" title="Hapus" disabled={!can('delete_master')}>
-                      <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />
-                    </button>
+                    {canWrite && (
+                      <button onClick={() => { setForm({ ...k }); setEditingId(k.id); setErrors({}); }} className="icon-btn h-7 w-7" aria-label="Edit" title="Edit">
+                        <Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />
+                      </button>
+                    )}
+                    {can('delete_master') && (
+                      <button onClick={() => setConfirmDel(k)} className="icon-btn h-7 w-7 text-danger hover:bg-danger/10" aria-label="Hapus" title="Hapus">
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 border-t border-line pt-3 text-[11.5px]">

@@ -47,7 +47,7 @@ export default function Penyusutan() {
     open: false, row: null, jadwal: [], loading: false,
   });
 
-  const canCompute = can('read');
+  const canCompute = can('write');
 
   const load = useCallback(async () => {
     setLoading(true);

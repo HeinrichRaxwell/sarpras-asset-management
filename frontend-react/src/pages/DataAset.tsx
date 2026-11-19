@@ -173,7 +173,7 @@ export default function DataAset() {
       <PageHeader
         title="Data Aset"
         subtitle={`Total ${meta.total} aset terdaftar`}
-        action={can('read') && (
+        action={can('write') && (
           <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={() => { setForm({ ...EMPTY }); setEditingId(null); setErrors({}); }}>
             Tambah Aset
           </Button>
@@ -241,12 +241,16 @@ export default function DataAset() {
                           <button onClick={() => void openDetail(r.kode)} className="icon-btn h-7 w-7" aria-label="Detail" title="Detail">
                             <Eye className="h-3.5 w-3.5" strokeWidth={1.8} />
                           </button>
-                          <button onClick={() => { setForm({ ...r }); setEditingId(r.kode); setErrors({}); }} className="icon-btn h-7 w-7" aria-label="Edit" title="Edit">
-                            <Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />
-                          </button>
-                          <button onClick={() => setConfirmDelete(r)} className="icon-btn h-7 w-7 text-danger hover:bg-danger/10" aria-label="Hapus" title="Hapus" disabled={!can('delete_master')}>
-                            <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />
-                          </button>
+                          {can('write') && (
+                            <button onClick={() => { setForm({ ...r }); setEditingId(r.kode); setErrors({}); }} className="icon-btn h-7 w-7" aria-label="Edit" title="Edit">
+                              <Pencil className="h-3.5 w-3.5" strokeWidth={1.8} />
+                            </button>
+                          )}
+                          {can('delete_master') && (
+                            <button onClick={() => setConfirmDelete(r)} className="icon-btn h-7 w-7 text-danger hover:bg-danger/10" aria-label="Hapus" title="Hapus">
+                              <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

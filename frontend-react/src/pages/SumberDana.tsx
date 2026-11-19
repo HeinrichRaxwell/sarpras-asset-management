@@ -5,7 +5,6 @@ import { useTheme } from '@/context/ThemeContext';
 import {
   Button, Field, Input, Textarea, Modal, PageHeader, EmptyState, Skeleton,
 } from '@/components/ui';
-import { cn } from '@/lib/utils';
 import {
   Wallet, Plus, Pencil, Trash2, Hash, CalendarDays, AlertTriangle,
 } from 'lucide-react';
@@ -124,11 +123,11 @@ export default function SumberDana() {
       <PageHeader
         title="Sumber Dana"
         subtitle="Kelola daftar sumber pendanaan aset beserta ketentuan penghapusannya."
-        action={
+        action={can('write') && (
           <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={openCreate}>
             Tambah Sumber Dana
           </Button>
-        }
+        )}
       />
 
       <div className="glass rounded-2xl p-5" data-theme={theme}>
@@ -178,17 +177,20 @@ export default function SumberDana() {
                     </td>
                     <td className="py-2.5 pr-4 text-right">
                       <div className="inline-flex gap-1.5">
-                        <button className="icon-btn" aria-label="Ubah" onClick={() => openEdit(r)}>
-                          <Pencil className="h-4 w-4" strokeWidth={1.8} />
-                        </button>
-                        <button
-                          className={cn('icon-btn', !canDelete && 'opacity-40 cursor-not-allowed')}
-                          aria-label="Hapus"
-                          disabled={!canDelete}
-                          onClick={() => canDelete && setConfirmDel(r)}
-                        >
-                          <Trash2 className="h-4 w-4 text-danger" strokeWidth={1.8} />
-                        </button>
+                        {can('write') && (
+                          <button className="icon-btn" aria-label="Ubah" onClick={() => openEdit(r)}>
+                            <Pencil className="h-4 w-4" strokeWidth={1.8} />
+                          </button>
+                        )}
+                        {canDelete && (
+                          <button
+                            className="icon-btn"
+                            aria-label="Hapus"
+                            onClick={() => setConfirmDel(r)}
+                          >
+                            <Trash2 className="h-4 w-4 text-danger" strokeWidth={1.8} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

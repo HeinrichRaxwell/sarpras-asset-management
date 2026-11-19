@@ -27,7 +27,7 @@ export default function ServisKuratif() {
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
   const [statusRow, setStatusRow] = useState<Servis | null>(null);
-  const canWrite = can('read');
+  const canWrite = can('write');
 
   const load = useCallback(async () => {
     setLoading(true);

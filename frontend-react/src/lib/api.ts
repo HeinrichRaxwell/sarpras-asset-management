@@ -16,6 +16,7 @@ export interface User {
   nama: string;
   email?: string;
   role: 'admin' | 'petugas' | 'pimpinan';
+  read_only?: boolean;
 }
 
 export function getToken(): string {
@@ -82,17 +83,30 @@ async function request<T>(
   return json;
 }
 
+// Akun pratinjau: semua aksi tulis ditolak di klien maupun server.
+export function isReadOnly(): boolean {
+  return !!getUser()?.read_only;
+}
+
+const READ_ONLY_MSG = 'Akun pratinjau hanya dapat melihat data. Perubahan tidak diizinkan.';
+
+function guardWrite() {
+  if (isReadOnly()) throw new ApiError(READ_ONLY_MSG, 403);
+}
+
 export const api = {
   get: <T = unknown>(p: string) => request<T>(p),
-  post: <T = unknown>(p: string, body?: unknown) => request<T>(p, { method: 'POST', body }),
-  put: <T = unknown>(p: string, body?: unknown) => request<T>(p, { method: 'PUT', body }),
-  patch: <T = unknown>(p: string, body?: unknown) => request<T>(p, { method: 'PATCH', body }),
-  delete: <T = unknown>(p: string) => request<T>(p, { method: 'DELETE' }),
+  post: <T = unknown>(p: string, body?: unknown) => { guardWrite(); return request<T>(p, { method: 'POST', body }); },
+  put: <T = unknown>(p: string, body?: unknown) => { guardWrite(); return request<T>(p, { method: 'PUT', body }); },
+  patch: <T = unknown>(p: string, body?: unknown) => { guardWrite(); return request<T>(p, { method: 'PATCH', body }); },
+  delete: <T = unknown>(p: string) => { guardWrite(); return request<T>(p, { method: 'DELETE' }); },
 };
 
-// Role helper
-export function can(action: 'delete_master' | 'approve' | 'read'): boolean {
-  const role = getUser()?.role;
+// Role helper. 'read' = boleh melihat; 'write' = boleh menambah/mengubah.
+export function can(action: 'delete_master' | 'approve' | 'read' | 'write'): boolean {
+  const u = getUser();
+  if (u?.read_only) return action === 'read';
+  const role = u?.role;
   if (role === 'admin') return true;
   if (role === 'petugas') return !['delete_master', 'approve'].includes(action);
   if (role === 'pimpinan') return ['read', 'approve'].includes(action);

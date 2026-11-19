@@ -1,7 +1,7 @@
 import { verifyToken, signToken, TokenError } from './jwt.js';
 import { HttpError } from './helpers.js';
 
-export function makeAuth(env) {
+export function makeAuth(env, db) {
   const secret = env.JWT_SECRET;
   if (!secret || secret === 'change_this_secret_in_production') {
     throw new Error('[FATAL] JWT_SECRET belum di-set. Worker menolak melayani permintaan.');
@@ -15,14 +15,22 @@ export function makeAuth(env) {
       const header = c.req.header('authorization') || '';
       const token = header.startsWith('Bearer ') ? header.slice(7) : null;
       if (!token) throw new HttpError(401, 'Token tidak ditemukan');
+      let claims;
       try {
-        c.set('user', await verifyToken(token, secret));
+        claims = await verifyToken(token, secret);
       } catch (err) {
         const msg = err instanceof TokenError && err.name === 'TokenExpiredError'
           ? 'Token kedaluwarsa'
           : 'Token tidak valid';
         throw new HttpError(401, msg);
       }
+      // read_only dibaca dari DB, bukan dari klaim token: token lama tidak boleh
+      // dipakai melewati pembatasan, dan perubahan flag langsung berlaku.
+      const row = await db.query('SELECT aktif, read_only FROM users WHERE id = $1', [claims.id]);
+      const u = row.rows[0];
+      if (!u) throw new HttpError(401, 'Akun tidak ditemukan');
+      if (!u.aktif) throw new HttpError(403, 'Akun dinonaktifkan');
+      c.set('user', { ...claims, read_only: !!u.read_only });
       await next();
     },
 
@@ -30,6 +38,9 @@ export function makeAuth(env) {
       return async (c, next) => {
         const user = c.get('user');
         if (!user) throw new HttpError(401, 'Belum autentikasi');
+        if (user.read_only) {
+          throw new HttpError(403, 'Akun demo hanya dapat melihat data. Perubahan tidak diizinkan.');
+        }
         if (roles.length && !roles.includes(user.role)) {
           throw new HttpError(403, 'Akses ditolak untuk peran Anda');
         }

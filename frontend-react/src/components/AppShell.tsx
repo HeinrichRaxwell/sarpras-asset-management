@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   LayoutDashboard, Package, Warehouse, Tags, MapPin, TrendingDown, Wallet,
   ArrowLeftRight, Repeat, Wrench, ShieldCheck, ClipboardCheck, History,
-  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, X, PanelLeft,
+  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, X, PanelLeft, Eye,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getUser, clearAuth } from '@/lib/api';
@@ -201,12 +201,21 @@ export function AppShell({ title }: { title: string }) {
             <div className="avatar">{(user?.nama || 'A').charAt(0).toUpperCase()}</div>
             <div className="hidden sm:block leading-tight">
               <div className="text-[13px] font-semibold">{user?.nama}</div>
-              <div className="text-[10.5px] text-muted uppercase">{user?.role}</div>
+              <div className="text-[10.5px] text-muted uppercase">{user?.role}{user?.read_only ? ' · pratinjau' : ''}</div>
             </div>
           </div>
         </header>
 
         <main className="flex-1 p-6">
+          {user?.read_only && (
+            <div className="mb-5 flex items-start gap-3 rounded-[12px] border border-amber-400/40 bg-amber-400/10 px-4 py-3">
+              <Eye className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+              <div className="text-[12.5px] leading-relaxed">
+                <span className="font-semibold">Mode Pratinjau</span> — akun ini hanya dapat melihat data.
+                Semua aksi tambah, ubah, dan hapus dinonaktifkan agar data tetap utuh.
+              </div>
+            </div>
+          )}
           <Outlet />
         </main>
 

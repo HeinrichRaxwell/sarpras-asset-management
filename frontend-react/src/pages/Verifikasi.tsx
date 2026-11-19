@@ -191,7 +191,7 @@ export default function Verifikasi() {
             <Button variant="ghost" icon={<RefreshCw className="h-4 w-4" />} onClick={fetchSesi} aria-label="Muat ulang">
               Muat ulang
             </Button>
-            <Button icon={<Plus className="h-4 w-4" />} onClick={() => { setError(''); setCreateOpen(true); }} disabled={!can('read')}>
+            <Button icon={<Plus className="h-4 w-4" />} onClick={() => { setError(''); setCreateOpen(true); }} disabled={!can('write')}>
               Sesi Baru
             </Button>
           </div>
@@ -340,7 +340,7 @@ export default function Verifikasi() {
                 <Button
                   size="sm" icon={<Plus className="h-3.5 w-3.5" />}
                   onClick={() => { setError(''); setItemForm(emptyItem); setRecordOpen(true); }}
-                  disabled={!can('read')}
+                  disabled={!can('write')}
                 >
                   Catat Hasil
                 </Button>

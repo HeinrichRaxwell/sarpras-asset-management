@@ -29,7 +29,7 @@ export default function Peminjaman() {
   const [status, setStatus] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
   const [returnRow, setReturnRow] = useState<Peminjaman | null>(null);
-  const canWrite = can('read');
+  const canWrite = can('write');
 
   const load = useCallback(async () => {
     setLoading(true);

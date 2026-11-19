@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { api, getUser } from '@/lib/api';
+import { api, getUser, can } from '@/lib/api';
 import { useToast } from '@/context/ToastContext';
 import { formatDateTime } from '@/lib/utils';
 import { PageHeader, Button, Modal, Field, Input, Select, Badge, EmptyState, Skeleton } from '@/components/ui';
@@ -15,6 +15,7 @@ const EMPTY = { username: '', password: '', nama: '', email: '', role: 'petugas'
 export default function Pengguna() {
   const { toast } = useToast();
   const isAdmin = getUser()?.role === 'admin';
+  const canManage = isAdmin && can('write');
   const meId = getUser()?.id;
   const [rows, setRows] = useState<UserRow[]>([]);
   const [meta, setMeta] = useState({ page: 1, totalPages: 1, total: 0 });
@@ -108,7 +109,7 @@ export default function Pengguna() {
       <PageHeader
         title="Pengguna & Peran"
         subtitle="Kelola akun pengguna sistem dan peran (admin, petugas, pimpinan)."
-        action={isAdmin ? (
+        action={canManage ? (
           <Button icon={<Plus className="h-4 w-4" />} onClick={() => { setForm(EMPTY); setErrors({}); setCreateOpen(true); }}>
             Tambah Pengguna
           </Button>
@@ -145,20 +146,24 @@ export default function Pengguna() {
                     <td className="py-3 pr-3 text-muted">{u.last_login ? formatDateTime(u.last_login) : 'Belum pernah'}</td>
                     <td className="py-3">
                       <div className="flex justify-end gap-1.5">
-                        <Button
-                          size="sm" variant="ghost" icon={<KeyRound className="h-3.5 w-3.5" />}
-                          onClick={() => { setResetFor(u); setNewPw(''); setResetErr(''); }}
-                        >
-                          Reset
-                        </Button>
-                        <Button
-                          size="sm" variant={u.aktif ? 'danger' : 'outline'}
-                          icon={<Power className="h-3.5 w-3.5" />}
-                          disabled={u.id === meId}
-                          onClick={() => toggle(u)}
-                        >
-                          {u.aktif ? 'Nonaktifkan' : 'Aktifkan'}
-                        </Button>
+                        {canManage && (
+                          <>
+                            <Button
+                              size="sm" variant="ghost" icon={<KeyRound className="h-3.5 w-3.5" />}
+                              onClick={() => { setResetFor(u); setNewPw(''); setResetErr(''); }}
+                            >
+                              Reset
+                            </Button>
+                            <Button
+                              size="sm" variant={u.aktif ? 'danger' : 'outline'}
+                              icon={<Power className="h-3.5 w-3.5" />}
+                              disabled={u.id === meId}
+                              onClick={() => toggle(u)}
+                            >
+                              {u.aktif ? 'Nonaktifkan' : 'Aktifkan'}
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -5,7 +5,6 @@ import { useTheme } from '@/context/ThemeContext';
 import {
   Button, Field, Input, Select, Modal, PageHeader, EmptyState, Skeleton,
 } from '@/components/ui';
-import { cn } from '@/lib/utils';
 import {
   MapPin, Plus, Pencil, Trash2, FolderTree, AlertTriangle, Building2,
 } from 'lucide-react';
@@ -159,11 +158,11 @@ export default function LokasiAset() {
       <PageHeader
         title="Lokasi Aset"
         subtitle="Kelola hierarki ruang penyimpanan aset (gedung, lantai, ruang)."
-        action={
+        action={can('write') && (
           <Button icon={<Plus className="h-4 w-4" strokeWidth={1.8} />} onClick={openCreate}>
             Tambah Lokasi
           </Button>
-        }
+        )}
       />
 
       <div className="glass rounded-2xl p-5" data-theme={theme}>
@@ -207,21 +206,24 @@ export default function LokasiAset() {
                     <td className="py-2.5 pr-4">{row.penanggung_jawab || '-'}</td>
                     <td className="py-2.5 pr-4 text-right">
                       <div className="inline-flex gap-1.5">
-                        <button
-                          className="icon-btn"
-                          aria-label="Ubah"
-                          onClick={() => openEdit(row)}
-                        >
-                          <Pencil className="h-4 w-4" strokeWidth={1.8} />
-                        </button>
-                        <button
-                          className={cn('icon-btn', !canDelete && 'opacity-40 cursor-not-allowed')}
-                          aria-label="Hapus"
-                          disabled={!canDelete}
-                          onClick={() => canDelete && setConfirmDel(row)}
-                        >
-                          <Trash2 className="h-4 w-4 text-danger" strokeWidth={1.8} />
-                        </button>
+                        {can('write') && (
+                          <button
+                            className="icon-btn"
+                            aria-label="Ubah"
+                            onClick={() => openEdit(row)}
+                          >
+                            <Pencil className="h-4 w-4" strokeWidth={1.8} />
+                          </button>
+                        )}
+                        {canDelete && (
+                          <button
+                            className="icon-btn"
+                            aria-label="Hapus"
+                            onClick={() => setConfirmDel(row)}
+                          >
+                            <Trash2 className="h-4 w-4 text-danger" strokeWidth={1.8} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
