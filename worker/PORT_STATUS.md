@@ -23,14 +23,15 @@ Secrets Worker: `JWT_SECRET`, `JWT_EXPIRES`, `BCRYPT_ROUNDS` (diset via `wrangle
 
 ## Akun
 
-| Username | Role | Akses |
+| Username | Password | Akses |
 |---|---|---|
-| `Raxwell` | admin | penuh (owner tunggal) |
-| `demo-admin` | admin | pratinjau, read-only |
-| `demo-petugas` | petugas | pratinjau, read-only |
-| `demo-pimpinan` | pimpinan | pratinjau, read-only |
+| `Raxwell` | (rahasia owner) | penuh — owner tunggal |
+| `demo-admin` | `demo-admin123` | pratinjau, read-only |
+| `demo-petugas` | `demo-petugas123` | pratinjau, read-only |
+| `demo-pimpinan` | `demo-pimpinan123` | pratinjau, read-only |
 
-Password tidak disimpan di repo. Akun lama (`admin`/`petugas`/`pimpinan`) sudah dihapus.
+Password owner tidak disimpan di repo. Akun lama (`admin`/`petugas`/`pimpinan`) sudah dihapus.
+Ketiga akun pratinjau tercantum di bawah form login beserta catatan pembatasannya.
 
 Read-only dipaksa di **server**: `authenticate` membaca flag dari DB tiap request,
 middleware menolak semua metode tulis, dan `authorize()` menolak sebagai lapis kedua.
