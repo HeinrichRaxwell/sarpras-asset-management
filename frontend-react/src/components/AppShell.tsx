@@ -149,8 +149,8 @@ export function AppShell({ title }: { title: string }) {
         <div className={cn('relative flex items-center gap-2.5 px-3 py-5', collapsed && 'justify-center px-2')}>
           {!collapsed && (
             <>
-              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brand to-violet-500 text-[13px] font-extrabold text-white">
-                SA
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-[#0A1B2E] to-[#F5B301] text-[13px] font-extrabold text-white">
+                RP
               </div>
               <div className="leading-tight">
                 <div className="text-[14px] font-bold tracking-tight">RAILPRAS</div>

@@ -38,7 +38,7 @@ export default function GudangTransit() {
   const load = async () => {
     setLoading(true);
     try {
-      const res = await api.get<GudangItem[]>(`/gudang?page=${page}&limit=10`);
+      const res = await api.get<GudangItem[]>(`/gudang-transit?page=${page}&limit=10`);
       setRows(res.data ?? []);
       if (res.meta) setMeta(res.meta);
     } catch (e) {
@@ -92,7 +92,7 @@ export default function GudangTransit() {
             catatan_qc: qcForm.catatan || null,
           }
         : { qc_status: 'Ditolak', catatan_qc: qcForm.catatan || null };
-      await api.patch(`/gudang/${qcTarget.id}/qc`, body);
+      await api.patch(`/gudang-transit/${qcTarget.id}/qc`, body);
       toast(qcResult === 'Lolos' ? 'Barang lolos QC & dipromosikan jadi aset' : 'Barang ditolak', 'success');
       setQcTarget(null);
       void load();

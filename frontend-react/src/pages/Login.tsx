@@ -79,7 +79,7 @@ export default function Login() {
               RP
             </div>
             <div>
-              <div className="text-sm font-bold tracking-tight">RPRPRAS AM</div>
+              <div className="text-sm font-bold tracking-tight">RAILPRAS</div>
               <div className="text-[11.5px] opacity-70">Manajemen Aset Sarana & Prasarana Perkeretaapian</div>
             </div>
           </div>
@@ -109,7 +109,7 @@ export default function Login() {
 
         {/* Sisi form — dark solid agar konsisten & teks terbaca di atas foto */}
         <div className="flex flex-col justify-center bg-slate-950/92 p-8 text-white md:p-10">
-          <div className="mb-1 flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-wide text-indigo-300" data-reveal>
+          <div className="mb-1 flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-wide text-[#F5B301]" data-reveal>
             Konsol Operasional RAILPRAS
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight" data-reveal>Selamat datang kembali</h2>

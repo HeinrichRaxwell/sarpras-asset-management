@@ -77,7 +77,7 @@ export default function Dashboard() {
     charts.current = [];
     const gridColor = theme === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
     const tickColor = theme === 'dark' ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.6)';
-    const palette = ['#6366f1', '#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#84cc16', '#0ea5e9', '#a855f7'];
+    const palette = ['#0A1B2E', '#F5B301', '#1F4E79', '#2E86AB', '#E4572E', '#0E7C7B', '#7A7A7A', '#B8860B', '#41698C', '#8C6D31'];
 
     const mk = (ref: HTMLCanvasElement | null, cfg: any) => {
       if (!ref) return;
