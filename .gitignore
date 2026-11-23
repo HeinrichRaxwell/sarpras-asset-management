@@ -17,3 +17,5 @@ wrangler_install.log
 deps_install.log
 
 .secrets.json
+
+verify/

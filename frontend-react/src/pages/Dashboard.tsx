@@ -136,10 +136,10 @@ export default function Dashboard() {
   }, [d, theme]);
 
   const kpis = [
-    { label: 'Total Aset', value: formatNumber(d?.totals.total_aset ?? 0), icon: Package, tone: 'bg-brand/15 text-brand' },
-    { label: 'Nilai Perolehan', value: formatRupiah(d?.totals.total_nilai_perolehan ?? 0), icon: Wallet, tone: 'bg-success/15 text-success' },
-    { label: 'Dipinjam', value: formatNumber(d?.totals.jumlah_dipinjam ?? 0), icon: ArrowLeftRight, tone: 'bg-warning/15 text-warning' },
-    { label: 'Dalam Servis', value: formatNumber(d?.totals.jumlah_servis ?? 0), icon: Wrench, tone: 'bg-danger/15 text-danger' },
+    { label: 'Total Aset', value: formatNumber(d?.totals.total_aset ?? 0), icon: Package, tone: 'bg-brand/15 text-brand', sub: 'Armada aset terdaftar' },
+    { label: 'Nilai Perolehan', value: formatRupiah(d?.totals.total_nilai_perolehan ?? 0), icon: Wallet, tone: 'bg-success/15 text-success', sub: 'Nilai perolehan keseluruhan' },
+    { label: 'Di Operasikan Pihak Lain', value: formatNumber(d?.totals.jumlah_dipinjam ?? 0), icon: ArrowLeftRight, tone: 'bg-warning/15 text-warning', sub: 'Status peminjaman aktif' },
+    { label: 'Di Depo Perawatan', value: formatNumber(d?.totals.jumlah_servis ?? 0), icon: Wrench, tone: 'bg-danger/15 text-danger', sub: 'Sedang melalui work order' },
   ];
 
   const activeAlerts = d ? ALERT_META.filter((a) => (d.alerts?.[a.key] ?? 0) > 0) : [];
@@ -147,6 +147,31 @@ export default function Dashboard() {
   return (
     <>
       <PageHeader title="Dashboard" subtitle="Ringkasan kondisi aset organisasi secara real-time." />
+
+      {d && (
+        <div className="mb-5 overflow-hidden rounded-2xl border border-line bg-[#0A1B2E] text-white">
+          <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
+            <div className="flex items-center gap-2.5">
+              <span className="inline-block h-2.5 w-2.5 animate-pulse rounded-full bg-[#F5B301]" />
+              <span className="text-[12px] font-bold uppercase tracking-[0.18em]">Status Armada Aset</span>
+            </div>
+            <span className="text-[10.5px] uppercase tracking-widest text-white/50">RAILPRAS · Papan Operasional</span>
+          </div>
+          <div className="grid grid-cols-2 divide-x divide-white/10 md:grid-cols-4">
+            {[
+              { l: 'Beroperasi', v: (d.totals.total_aset ?? 0) - (d.totals.jumlah_dipinjam ?? 0) - (d.totals.jumlah_servis ?? 0), c: 'text-emerald-300' },
+              { l: 'Di Operasikan Pihak Lain', v: d.totals.jumlah_dipinjam ?? 0, c: 'text-[#F5B301]' },
+              { l: 'Di Depo Perawatan', v: d.totals.jumlah_servis ?? 0, c: 'text-orange-300' },
+              { l: 'Kondisi Perlu Tindakan', v: d.totals.jumlah_rusak ?? 0, c: 'text-red-300' },
+            ].map((x) => (
+              <div key={x.l} className="px-5 py-4">
+                <div className="text-[10.5px] font-semibold uppercase tracking-widest text-white/55">{x.l}</div>
+                <div className={`mt-1 text-2xl font-extrabold tabular-nums ${x.c}`}>{formatNumber(x.v)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -162,6 +187,7 @@ export default function Dashboard() {
                 <div>
                   <div className="text-[12px] font-semibold uppercase tracking-wide text-muted">{k.label}</div>
                   <div className="mt-1.5 text-[22px] font-extrabold tracking-tight">{k.value}</div>
+                  <div className="mt-1 text-[11px] text-muted">{k.sub}</div>
                 </div>
                 <div className={`grid h-10 w-10 place-items-center rounded-xl ${k.tone}`}>
                   <k.icon className="h-5 w-5" strokeWidth={1.8} />

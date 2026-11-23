@@ -153,7 +153,7 @@ export function AppShell({ title }: { title: string }) {
                 SA
               </div>
               <div className="leading-tight">
-                <div className="text-[14px] font-bold tracking-tight">SARPRAS AM</div>
+                <div className="text-[14px] font-bold tracking-tight">RAILPRAS</div>
                 <div className="text-[10px] text-muted">Asset Management</div>
               </div>
             </>
@@ -220,7 +220,7 @@ export function AppShell({ title }: { title: string }) {
         </main>
 
         <footer className="px-6 pb-5 text-center text-[11.5px] text-muted">
-          SARPRAS AM — Sistem Manajemen Sarana &amp; Prasarana &copy; {new Date().getFullYear()}
+          RAILPRAS — Sistem Manajemen Sarana &amp; Prasarana &copy; {new Date().getFullYear()}
         </footer>
       </div>
     </div>

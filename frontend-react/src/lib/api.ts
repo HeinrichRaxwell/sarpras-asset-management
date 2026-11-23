@@ -88,6 +88,21 @@ export function isReadOnly(): boolean {
   return !!getUser()?.read_only;
 }
 
+// Label status gaya operasional perkeretaapian.
+// Nilai yang dikirim ke API tetap istilah asli agar data aman.
+export const STATUS_LABEL: Record<string, string> = {
+  Aktif: 'Beroperasi',
+  Dipinjam: 'Di Operasikan Pihak Lain',
+  Servis: 'Di Depo Perawatan',
+  Mutasi: 'Alih Jalur',
+  Dihapus: 'Nonaktif / Afkir',
+};
+
+export function statusLabel(s?: string | null): string {
+  if (!s) return '';
+  return STATUS_LABEL[s] ?? s;
+}
+
 const READ_ONLY_MSG = 'Akun pratinjau hanya dapat melihat data. Perubahan tidak diizinkan.';
 
 function guardWrite() {

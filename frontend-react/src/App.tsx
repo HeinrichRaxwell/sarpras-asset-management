@@ -43,7 +43,7 @@ export default function App() {
     <Suspense fallback={<Loading />}>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<RequireAuth><AppShell title="SARPRAS AM" /></RequireAuth>}>
+        <Route path="/" element={<RequireAuth><AppShell title="RAILPRAS" /></RequireAuth>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="aset" element={<DataAset />} />

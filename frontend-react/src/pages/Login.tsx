@@ -8,7 +8,7 @@ import { Sun, Moon, Lock, User, Check, Eye, EyeOff, ShieldCheck } from 'lucide-r
 
 const FEATURES = [
   'Inventarisasi & pelacakan aset real-time',
-  'Alur peminjaman, mutasi & perawatan',
+  'Work order perawatan & mutasi antardepot',
   'Depresiasi otomatis & pelaporan KIR',
   'Jejak audit lengkap & kontrol akses berjenjang',
 ];
@@ -60,10 +60,10 @@ export default function Login() {
 
   return (
     <div className="relative grid min-h-screen place-items-center overflow-hidden p-5">
-      {/* Background foto asli — biarkan tampil penuh, tanpa overlay ungu */}
-      <div className="absolute inset-0 -z-20 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.jpg')" }} />
-      {/* Overlay tipis hanya untuk kontras tombol tema */}
-      <div className="absolute inset-0 -z-10 bg-black/20" />
+      {/* Background foto perkeretaapian */}
+      <div className="absolute inset-0 -z-20 bg-cover bg-center" style={{ backgroundImage: "url('/rail-bg.jpg')" }} />
+      {/* Overlay navy untuk kontras teks & branding */}
+      <div className="absolute inset-0 -z-10 bg-[#0A1B2E]/70" />
 
       {/* Tombol tema */}
       <button onClick={toggle} className="icon-btn glass absolute right-5 top-5 z-10" aria-label="Ganti tema">
@@ -76,20 +76,20 @@ export default function Login() {
 
           <div className="flex items-center gap-3" data-reveal>
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/15 text-lg font-extrabold backdrop-blur-md">
-              SA
+              RP
             </div>
             <div>
-              <div className="text-sm font-bold tracking-tight">SARPRAS AM</div>
-              <div className="text-[11.5px] opacity-70">Enterprise Asset Management</div>
+              <div className="text-sm font-bold tracking-tight">RPRPRAS AM</div>
+              <div className="text-[11.5px] opacity-70">Manajemen Aset Sarana & Prasarana Perkeretaapian</div>
             </div>
           </div>
 
           <div>
             <h1 className="mb-3 text-[34px] font-extrabold leading-[1.08] tracking-tight" data-reveal>
-              Satu platform<br />untuk seluruh<br />aset organisasi.
+              Kendalikan seluruh<br />aset sarana &amp; prasarana<br />dalam satu jalur.
             </h1>
             <p className="max-w-[380px] text-sm leading-relaxed opacity-90" data-reveal>
-              Pengelolaan aset dari perolehan hingga penghapusan — terdokumentasi, terlacak, dan tervalidasi dalam satu sistem terpadu.
+              Pantau kondisi armada aset, perawatan, mutasi, hingga penghapusan — terdokumentasi, terlacak, dan tervalidasi layaknya operasi perkeretaapian.
             </p>
             <ul className="mt-7 space-y-3 text-[13px]" data-reveal>
               {FEATURES.map((f) => (
@@ -110,11 +110,11 @@ export default function Login() {
         {/* Sisi form — dark solid agar konsisten & teks terbaca di atas foto */}
         <div className="flex flex-col justify-center bg-slate-950/92 p-8 text-white md:p-10">
           <div className="mb-1 flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-wide text-indigo-300" data-reveal>
-            Portal Administrator
+            Konsol Operasional RAILPRAS
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight" data-reveal>Selamat datang kembali</h2>
           <p className="mb-7 mt-1.5 text-[13px] text-slate-400" data-reveal>
-            Masukkan kredensial Anda untuk mengakses konsol pengelolaan aset.
+            Masukkan kredensial Anda untuk mengakses konsol manajemen aset.
           </p>
 
           {err && (

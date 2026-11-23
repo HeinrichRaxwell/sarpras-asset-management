@@ -3,6 +3,7 @@ import { api, can } from '@/lib/api';
 import { formatRupiah, formatDate, cn } from '@/lib/utils';
 import { useToast } from '@/context/ToastContext';
 import { Button, Field, Input, Select, Textarea, Modal, Badge, statusType, PageHeader, EmptyState, Skeleton } from '@/components/ui';
+import { statusLabel } from '@/lib/api';
 import {
   Package, Plus, Pencil, Trash2, Search, X, Eye, ChevronLeft, ChevronRight,
   SlidersHorizontal, HardDrive,
@@ -195,7 +196,7 @@ export default function DataAset() {
           </Field>
           {filterField('Kategori', 'kategori_id', opts.kategori.map((k) => ({ value: String(k.id), label: k.nama })))}
           {filterField('Lokasi', 'lokasi_id', opts.lokasi.map((l) => ({ value: String(l.id), label: l.nama })))}
-          {filterField('Status', 'status', ['Aktif', 'Dipinjam', 'Servis', 'Mutasi', 'Dihapus'].map((s) => ({ value: s, label: s })))}
+          {filterField('Status', 'status', ['Aktif', 'Dipinjam', 'Servis', 'Mutasi', 'Dihapus'].map((s) => ({ value: s, label: statusLabel(s) })))}
           {filterField('Kondisi', 'kondisi', ['Baik', 'Rusak Ringan', 'Rusak Berat'].map((s) => ({ value: s, label: s })))}
           {activeFilters > 0 && (
             <Button variant="ghost" size="sm" icon={<SlidersHorizontal className="h-3.5 w-3.5" strokeWidth={1.8} />} onClick={() => setFilters({ kategori_id: '', lokasi_id: '', status: '', kondisi: '' })}>
@@ -233,7 +234,7 @@ export default function DataAset() {
                       <td className="px-4 py-3 font-semibold">{r.nama}</td>
                       <td className="px-4 py-3 text-muted">{opts.kategori.find((k) => k.id === r.kategori_id)?.nama ?? '-'}</td>
                       <td className="px-4 py-3 tabular-nums">{formatRupiah(r.nilai_perolehan)}</td>
-                      <td className="px-4 py-3"><Badge text={r.status ?? '-'} type={statusType(r.status ?? '')} /></td>
+                      <td className="px-4 py-3"><Badge text={statusLabel(r.status)} type={statusType(r.status ?? '')} /></td>
                       <td className="px-4 py-3"><Badge text={r.kondisi ?? '-'} type={statusType(r.kondisi ?? '')} /></td>
                       <td className="px-4 py-3 text-muted">{formatDate(r.tanggal_perolehan)}</td>
                       <td className="px-4 py-3">
@@ -317,7 +318,7 @@ export default function DataAset() {
           </Field>
           <Field label="Status">
             <Select value={form?.status ?? 'Aktif'} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}>
-              {['Aktif', 'Dipinjam', 'Servis', 'Mutasi', 'Dihapus'].map((s) => <option key={s} value={s}>{s}</option>)}
+              {['Aktif', 'Dipinjam', 'Servis', 'Mutasi', 'Dihapus'].map((s) => <option key={s} value={s}>{statusLabel(s)}</option>)}
             </Select>
           </Field>
           <Field label="Kondisi">
@@ -340,7 +341,7 @@ export default function DataAset() {
                 <div className="font-mono text-[11.5px] text-muted">{detail?.kode}</div>
                 <h3 className="text-xl font-extrabold tracking-tight">{detail?.nama ?? 'Memuat...'}</h3>
                 <div className="mt-2 flex gap-1.5">
-                  {detail?.status && <Badge text={detail.status} type={statusType(detail.status)} />}
+                  {detail?.status && <Badge text={statusLabel(detail.status)} type={statusType(detail.status)} />}
                   {detail?.kondisi && <Badge text={detail.kondisi} type={statusType(detail.kondisi)} />}
                 </div>
               </div>
