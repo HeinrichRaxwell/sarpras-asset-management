@@ -17,6 +17,7 @@ const Mutasi = lazy(() => import('@/pages/Mutasi'));
 const ServisKuratif = lazy(() => import('@/pages/ServisKuratif'));
 const ServisPreventif = lazy(() => import('@/pages/ServisPreventif'));
 const Verifikasi = lazy(() => import('@/pages/Verifikasi'));
+const PetaPrasarana = lazy(() => import('@/pages/PetaPrasarana'));
 const AuditTrail = lazy(() => import('@/pages/AuditTrail'));
 const Penghapusan = lazy(() => import('@/pages/Penghapusan'));
 const LaporanKIR = lazy(() => import('@/pages/LaporanKIR'));
@@ -57,6 +58,7 @@ export default function App() {
           <Route path="servis-kuratif" element={<ServisKuratif />} />
           <Route path="servis-preventif" element={<ServisPreventif />} />
           <Route path="verifikasi" element={<Verifikasi />} />
+          <Route path="peta-prasarana" element={<PetaPrasarana />} />
           <Route path="audit" element={<AuditTrail />} />
           <Route path="penghapusan" element={<Penghapusan />} />
           <Route path="kir" element={<LaporanKIR />} />

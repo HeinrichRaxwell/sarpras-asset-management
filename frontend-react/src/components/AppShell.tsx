@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   LayoutDashboard, Package, Warehouse, Tags, MapPin, TrendingDown, Wallet,
   ArrowLeftRight, Repeat, Wrench, ShieldCheck, ClipboardCheck, History,
-  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, X, PanelLeft, Eye,
+  Trash2, FileText, Users, Settings, LogOut, Moon, Sun, X, PanelLeft, Eye, TrainFront,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getUser, clearAuth } from '@/lib/api';
@@ -37,6 +37,12 @@ const NAV: NavGroup[] = [
       { to: '/mutasi', label: 'Mutasi Antar-Ruang', icon: Repeat },
       { to: '/servis-kuratif', label: 'Servis Kuratif', icon: Wrench },
       { to: '/servis-preventif', label: 'Servis Preventif', icon: ShieldCheck },
+    ],
+  },
+  {
+    label: 'Prasarana Perkeretaapian',
+    items: [
+      { to: '/peta-prasarana', label: 'Peta Prasarana', icon: TrainFront },
     ],
   },
   {
